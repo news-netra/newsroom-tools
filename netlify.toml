@@ -1,0 +1,20 @@
+# Tell Netlify where your Edge Functions live
+[build]
+  edge_functions = "netlify/edge-functions"
+
+# Route mappings (array of tables)
+[[edge_functions]]
+  function = "protect"
+  path = "/"
+
+[[edge_functions]]
+  function = "protect"
+  path = "/tools/*"
+
+[[edge_functions]]
+  function = "protect"
+  path = "/__logout"
+
+[[edge_functions]]
+  function = "fetch-metadata"
+  path = "/api/fetch-metadata"
