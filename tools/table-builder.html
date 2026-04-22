@@ -8,14 +8,9 @@
   <style>
     /* ── Drop zone ── */
     .drop-zone {
-      display: block;
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 36px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-      color: var(--muted);
+      display: block; border: 2px dashed var(--border); border-radius: 12px;
+      padding: 36px 24px; text-align: center; cursor: pointer;
+      transition: border-color .15s, background .15s; color: var(--muted);
     }
     .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: #eef5ff; }
     .drop-zone input[type="file"] { display: none; }
@@ -23,79 +18,92 @@
 
     /* ── Panels ── */
     .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-top: 16px; }
-    .panel-title { font-size: 1rem; font-weight: 700; margin: 0 0 14px; color: var(--text); }
+    .panel-title { font-size: 1rem; font-weight: 700; margin: 0 0 6px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .panel-desc { font-size: 0.875rem; color: var(--muted); margin: 0 0 14px; }
+    .opt-tag { font-size: 0.7rem; font-weight: 600; background: #eef5ff; color: var(--accent); padding: 2px 8px; border-radius: 20px; letter-spacing: .04em; text-transform: uppercase; }
 
-    /* ── Column chips (label + mobile toggle) ── */
-    .col-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-    .col-chip-group {
-      display: inline-flex; align-items: stretch;
-      border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
-      transition: border-color .1s;
-    }
+    /* ── Column chips (label + 📱 toggle) ── */
+    .col-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .col-chip-group { display: inline-flex; align-items: stretch; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: border-color .1s; }
     .col-chip-group.col-on  { border-color: var(--accent); }
     .col-chip-group.col-off { opacity: .45; }
-    .col-chip-label {
-      padding: 5px 10px 5px 13px;
-      cursor: pointer; user-select: none; font-size: 0.85rem;
-      transition: background .1s, color .1s;
-    }
+    .col-chip-label { padding: 5px 10px 5px 13px; cursor: pointer; user-select: none; font-size: 0.85rem; transition: background .1s, color .1s; }
     .col-chip-group.col-on .col-chip-label { background: #eef5ff; color: var(--accent); font-weight: 600; }
-    .col-mob-btn {
-      padding: 5px 9px;
-      border: none; border-left: 1px solid var(--border);
-      background: transparent; cursor: pointer; font-size: 0.82rem; line-height: 1;
-      transition: background .1s; display: flex; align-items: center;
-      title: "Toggle mobile visibility";
-    }
+    .col-mob-btn { padding: 5px 9px; border: none; border-left: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 0.82rem; line-height: 1; transition: background .1s; display: flex; align-items: center; }
     .col-mob-btn:hover:not(:disabled) { background: #f0f4f8; }
     .col-mob-btn.mob-on  { color: var(--accent); }
-    .col-mob-btn.mob-off { color: var(--muted); filter: grayscale(1); opacity: .55; }
-    .col-mob-btn:disabled { cursor: default; opacity: .25; }
+    .col-mob-btn.mob-off { filter: grayscale(1); opacity: .45; }
+    .col-mob-btn:disabled { cursor: default; opacity: .2; }
 
-    /* ── Preview tabs (Desktop / Mobile) ── */
-    .preview-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 10px; margin-bottom: 12px;
+    /* ── Column styles step ── */
+    .style-rows { display: grid; gap: 10px; }
+    .style-row {
+      border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; background: var(--bg);
     }
-    .preview-tabs {
-      display: inline-flex;
-      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    .style-row-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; background: var(--panel);
+      flex-wrap: wrap;
     }
-    .preview-tab {
-      padding: 6px 18px; background: transparent; border: none;
-      cursor: pointer; font-size: 0.85rem; font-weight: 600;
-      color: var(--muted); transition: background .1s, color .1s;
+    .style-col-name { font-weight: 700; font-size: 0.9rem; flex: 1; min-width: 80px; }
+    .style-select {
+      padding: 5px 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: #fff; font-size: 0.85rem; color: var(--text); cursor: pointer;
     }
+    .style-preview-inline {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .style-preview-sample {
+      display: inline-block; padding: 2px 10px;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      border-radius: 3px;
+    }
+    /* Badge configurator */
+    .badge-config { padding: 12px 14px; border-top: 1px solid var(--border); display: grid; gap: 8px; }
+    .badge-val-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge-val-name { font-size: 0.85rem; min-width: 100px; flex-shrink: 0; }
+    .badge-val-preview {
+      display: inline-block; padding: 2px 10px; border-radius: 3px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .badge-swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+    .swatch {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2.5px solid transparent; cursor: pointer;
+      transition: border-color .1s, transform .1s;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.picked { border-color: var(--text) !important; }
+    /* Non-badge style previews */
+    .style-example {
+      padding: 8px 14px; border-top: 1px solid var(--border);
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .ex-bold   { font-weight: 700; color: var(--text); }
+    .ex-muted  { color: var(--muted); }
+    .ex-mono   { font-family: ui-monospace, monospace; color: var(--text); }
+    .ex-number { font-family: ui-monospace, monospace; color: var(--text); text-align: right; display: block; }
+
+    /* ── Preview tabs ── */
+    .preview-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .preview-tabs { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .preview-tab { padding: 6px 18px; background: transparent; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--muted); transition: background .1s, color .1s; }
     .preview-tab + .preview-tab { border-left: 1px solid var(--border); }
     .preview-tab.active { background: var(--accent); color: #fff; }
 
     /* ── Exclusion pill ── */
-    .excl-pill {
-      display: inline-block; padding: 3px 10px; border-radius: 20px;
-      background: #ffe4e4; color: #b91c1c; font-size: 0.8rem; font-weight: 700;
-    }
+    .excl-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; background: #ffe4e4; color: #b91c1c; font-size: 0.8rem; font-weight: 700; }
 
     /* ── Mobile simulation frame ── */
-    .mobile-sim {
-      max-width: 390px;
-      border: 8px solid #1a1a1a;
-      border-radius: 28px;
-      overflow: hidden;
-      margin: 0 auto;
-      box-shadow: 0 12px 40px rgba(0,0,0,.2);
-    }
+    .mobile-sim { max-width: 390px; border: 8px solid #1a1a1a; border-radius: 28px; overflow: hidden; margin: 0 auto; box-shadow: 0 12px 40px rgba(0,0,0,.2); }
     .mobile-sim-inner { overflow-x: auto; background: #fff; }
 
     /* ── Row preview table ── */
     .row-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
     table.row-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
-    .row-table thead th {
-      position: sticky; top: 0; z-index: 1;
-      background: var(--accent); color: #fff;
-      padding: 8px 10px; text-align: left;
-      font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em;
-      white-space: nowrap;
-    }
+    .row-table thead th { position: sticky; top: 0; z-index: 1; background: var(--accent); color: #fff; padding: 8px 10px; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
     .row-table tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
     .row-table tbody tr:nth-child(even) { background: #f7f9fb; }
     .row-table tbody tr:hover { background: #ddeeff; }
@@ -106,40 +114,28 @@
 
     /* ── Preview pagination ── */
     .preview-pag { display: flex; align-items: center; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
-    .ppg-btn {
-      min-width: 30px; height: 30px; padding: 0 8px;
-      border: 1px solid var(--border); border-radius: 6px;
-      background: var(--panel); cursor: pointer; font-size: 0.8rem;
-      display: inline-flex; align-items: center; justify-content: center;
-      color: var(--text); transition: background .1s, border-color .1s;
-    }
+    .ppg-btn { min-width: 30px; height: 30px; padding: 0 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; color: var(--text); transition: background .1s, border-color .1s; }
     .ppg-btn:hover:not(:disabled) { background: #eef5ff; border-color: var(--accent); }
     .ppg-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; cursor: default; }
     .ppg-btn:disabled { opacity: .35; cursor: default; }
     .ppg-ellipsis { color: var(--muted); padding: 0 2px; font-size: 0.8rem; }
 
     .hint { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
-
-    /* ── Output ── */
     #output-code { min-height: 140px; font-family: ui-monospace, monospace; font-size: 0.75rem; resize: vertical; }
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-
     @media (max-width: 600px) { .row.two { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 <div class="container">
-
-  <nav class="top-nav">
-    <a href="../index.html" class="btn secondary">← Back to tools</a>
-  </nav>
+  <nav class="top-nav"><a href="../index.html" class="btn secondary">← Back to tools</a></nav>
 
   <header>
     <h1>Table Builder</h1>
-    <p class="lede">Upload a CSV, configure columns, preview on desktop and mobile, exclude rows, then copy the embed code for Ghost.</p>
+    <p class="lede">Upload a CSV, style columns, preview on desktop and mobile, exclude rows, then copy the embed code for Ghost.</p>
   </header>
 
-  <!-- ── Step 1: Upload ── -->
+  <!-- 1 · Upload -->
   <div class="panel" id="step-upload">
     <p class="panel-title">1 · Upload CSV</p>
     <label class="drop-zone" id="drop-zone" for="csv-file">
@@ -156,53 +152,41 @@
     </details>
   </div>
 
-  <!-- ── Steps 2–5 (hidden until data loaded) ── -->
   <div id="config-sections" hidden>
 
-    <!-- Step 2: Table settings -->
+    <!-- 2 · Table settings -->
     <div class="panel">
       <p class="panel-title">2 · Table settings</p>
       <div class="tool-form">
-        <div class="row">
-          <label for="tbl-title">Headline</label>
-          <input type="text" id="tbl-title" placeholder="e.g. 120 Indians Pushed Into Bangladesh" />
-        </div>
-        <div class="row">
-          <label for="tbl-subtitle">Deck / subtitle</label>
-          <input type="text" id="tbl-subtitle" placeholder="A short description of the data…" />
-        </div>
+        <div class="row"><label for="tbl-title">Headline</label><input type="text" id="tbl-title" placeholder="e.g. 120 Indians Pushed Into Bangladesh" /></div>
+        <div class="row"><label for="tbl-subtitle">Deck / subtitle</label><input type="text" id="tbl-subtitle" placeholder="A short description of the data…" /></div>
         <div class="row two">
-          <div>
-            <label for="tbl-source">Source line</label>
-            <input type="text" id="tbl-source" placeholder="e.g. Data compiled by Bangladesh Border Guard" />
-          </div>
+          <div><label for="tbl-source">Source line</label><input type="text" id="tbl-source" placeholder="e.g. Data compiled by Bangladesh Border Guard" /></div>
           <div>
             <label for="tbl-pagesize">Rows per page</label>
-            <select id="tbl-pagesize">
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20" selected>20</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-            </select>
+            <select id="tbl-pagesize"><option value="10">10</option><option value="15">15</option><option value="20" selected>20</option><option value="25">25</option><option value="50">50</option></select>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Step 3: Column manager -->
+    <!-- 3 · Columns -->
     <div class="panel">
       <p class="panel-title">3 · Choose columns</p>
-      <p style="color:var(--muted);margin:0 0 12px;font-size:0.875rem">
-        Click a column name to show/hide it. Click <strong>📱</strong> to hide that column on mobile only.
-        The first visible column will be bolded as the primary field.
-      </p>
+      <p class="panel-desc">Click a column name to show/hide it. Click 📱 to hide it on mobile only. The first visible column will be bolded as the primary field.</p>
       <div class="col-list" id="col-list"></div>
     </div>
 
-    <!-- Step 4: Preview + Exclude rows -->
+    <!-- 4 · Column styles -->
     <div class="panel">
-      <p class="panel-title">4 · Preview &amp; exclude rows</p>
+      <p class="panel-title">4 · Column styles <span class="opt-tag">optional</span></p>
+      <p class="panel-desc">Apply special formatting to specific columns — like coloured badges for categories, bold for key fields, or monospace for numbers and codes.</p>
+      <div class="style-rows" id="col-style-list"></div>
+    </div>
+
+    <!-- 5 · Preview & exclude -->
+    <div class="panel">
+      <p class="panel-title">5 · Preview &amp; exclude rows</p>
       <div class="preview-bar">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <div class="preview-tabs">
@@ -213,37 +197,20 @@
         </div>
         <span class="excl-pill" id="excl-pill" hidden>0 excluded</span>
       </div>
-
-      <!-- Desktop view -->
       <div id="desktop-view">
-        <div class="row-table-wrap">
-          <table class="row-table">
-            <thead id="row-thead"></thead>
-            <tbody id="row-tbody"></tbody>
-          </table>
-        </div>
+        <div class="row-table-wrap"><table class="row-table"><thead id="row-thead"></thead><tbody id="row-tbody"></tbody></table></div>
       </div>
-
-      <!-- Mobile simulation view -->
       <div id="mobile-view" hidden>
-        <div class="mobile-sim">
-          <div class="mobile-sim-inner">
-            <table class="row-table" id="mob-table">
-              <thead id="mob-thead"></thead>
-              <tbody id="mob-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-        <p class="hint" style="text-align:center">Simulated at 390px — showing only mobile-visible columns</p>
+        <div class="mobile-sim"><div class="mobile-sim-inner"><table class="row-table"><thead id="mob-thead"></thead><tbody id="mob-tbody"></tbody></table></div></div>
+        <p class="hint" style="text-align:center">Simulated at 390px — mobile-only hidden columns are not shown</p>
       </div>
-
       <div class="preview-pag" id="preview-pag"></div>
       <p class="hint" id="row-summary"></p>
     </div>
 
-    <!-- Step 5: Generate -->
+    <!-- 6 · Generate -->
     <div class="panel">
-      <p class="panel-title">5 · Generate embed</p>
+      <p class="panel-title">6 · Generate embed</p>
       <div class="action-row">
         <button class="btn" onclick="generateOutput()">Generate HTML</button>
         <button class="btn secondary" onclick="copyOutput()">Copy HTML</button>
@@ -255,23 +222,38 @@
     </div>
 
   </div><!-- /config-sections -->
-</div><!-- /container -->
+</div>
 
 <script>
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
+   COLOUR PRESETS (for badge style)
+───────────────────────────────────────────── */
+const PRESETS = [
+  { name: 'Navy',   bg: '#e5eff5', color: '#00243e' },
+  { name: 'Amber',  bg: '#fef3cd', color: '#7a5200' },
+  { name: 'Green',  bg: '#dcfce7', color: '#166534' },
+  { name: 'Red',    bg: '#fee2e2', color: '#991b1b' },
+  { name: 'Purple', bg: '#f3e8ff', color: '#6b21a8' },
+  { name: 'Teal',   bg: '#ccfbf1', color: '#0f766e' },
+  { name: 'Gray',   bg: '#f1f5f9', color: '#334155' },
+  { name: 'Pink',   bg: '#fce7f3', color: '#9d174d' },
+];
+
+/* ─────────────────────────────────────────────
    STATE
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 let allRows = [];
-// [{idx, label, visible, mobileVisible}]
-let allCols = [];
-const excluded = new Set();
+let allCols = []; // [{idx, label, visible, mobileVisible}]
+const excluded  = new Set();
+// colStyles[colIdx] = {type:'none'|'badge'|'bold'|'muted'|'mono'|'number', badgeMap:{val:presetIdx}}
+const colStyles = {};
 let previewMode = 'desktop';
 let previewPage = 1;
 const PREVIEW_PZ = 20;
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    CSV PARSER
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 function parseCSV(text) {
   text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
   const first = text.split('\n')[0];
@@ -279,37 +261,32 @@ function parseCSV(text) {
   const semis = (first.match(/;/g)  || []).length;
   const commas= (first.match(/,/g)  || []).length;
   const delim = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
-
   const rows = [];
   let row = [], field = '', inQ = false;
   for (let i = 0; i <= text.length; i++) {
     const ch = i < text.length ? text[i] : '\n';
     if (ch === '"') {
-      if (inQ && text[i + 1] === '"') { field += '"'; i++; }
-      else inQ = !inQ;
+      if (inQ && text[i + 1] === '"') { field += '"'; i++; } else inQ = !inQ;
     } else if (ch === delim && !inQ) {
       row.push(field.trim()); field = '';
     } else if (ch === '\n' && !inQ) {
       row.push(field.trim()); field = '';
       if (row.some(f => f !== '')) rows.push(row);
       row = [];
-    } else {
-      field += ch;
-    }
+    } else { field += ch; }
   }
   return rows;
 }
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    LOAD DATA
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 function loadData(lines) {
   if (lines.length < 2) { alert('CSV must have a header row and at least one data row.'); return; }
   allRows = lines.slice(1);
-  allCols = lines[0].map((h, i) => ({
-    idx: i, label: h || `Column ${i + 1}`, visible: true, mobileVisible: true
-  }));
+  allCols = lines[0].map((h, i) => ({ idx: i, label: h || `Column ${i + 1}`, visible: true, mobileVisible: true }));
   excluded.clear();
+  Object.keys(colStyles).forEach(k => delete colStyles[k]);
   previewPage = 1;
 
   document.getElementById('config-sections').hidden = false;
@@ -318,17 +295,16 @@ function loadData(lines) {
     ' columns · <span style="color:var(--accent)">drop another file to replace</span>';
 
   renderColList();
+  renderColStyleList();
   renderPreview();
 }
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    FILE / PASTE
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 document.getElementById('csv-file').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => loadData(parseCSV(ev.target.result));
-  r.readAsText(f, 'UTF-8');
+  const r = new FileReader(); r.onload = ev => loadData(parseCSV(ev.target.result)); r.readAsText(f, 'UTF-8');
 });
 const dz = document.getElementById('drop-zone');
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
@@ -336,18 +312,15 @@ dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('drag-over');
   const f = e.dataTransfer.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => loadData(parseCSV(ev.target.result));
-  r.readAsText(f, 'UTF-8');
+  const r = new FileReader(); r.onload = ev => loadData(parseCSV(ev.target.result)); r.readAsText(f, 'UTF-8');
 });
 function parsePasted() {
-  const t = document.getElementById('csv-paste').value.trim();
-  if (t) loadData(parseCSV(t));
+  const t = document.getElementById('csv-paste').value.trim(); if (t) loadData(parseCSV(t));
 }
 
-/* ────────────────────────────────────────────────
-   COLUMN CHIPS  (label + 📱 mobile toggle)
-──────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   COLUMN CHIPS
+───────────────────────────────────────────── */
 function renderColList() {
   const list = document.getElementById('col-list');
   list.innerHTML = '';
@@ -355,24 +328,23 @@ function renderColList() {
     const group = document.createElement('div');
     group.className = 'col-chip-group ' + (col.visible ? 'col-on' : 'col-off');
 
-    // Label — toggles desktop visibility
     const label = document.createElement('span');
     label.className = 'col-chip-label';
     label.textContent = col.label;
-    label.title = col.visible ? 'Click to hide column' : 'Click to show column';
+    label.title = col.visible ? 'Click to hide' : 'Click to show';
     label.addEventListener('click', () => {
       allCols[i].visible = !allCols[i].visible;
       previewPage = 1;
       renderColList();
+      renderColStyleList();
       renderPreview();
     });
 
-    // 📱 button — toggles mobile visibility
     const mobBtn = document.createElement('button');
     mobBtn.className = 'col-mob-btn ' + (col.mobileVisible ? 'mob-on' : 'mob-off');
     mobBtn.textContent = '📱';
     mobBtn.disabled = !col.visible;
-    mobBtn.title = col.mobileVisible ? 'Visible on mobile — click to hide on mobile' : 'Hidden on mobile — click to show on mobile';
+    mobBtn.title = col.mobileVisible ? 'Visible on mobile — click to hide' : 'Hidden on mobile — click to show';
     mobBtn.addEventListener('click', e => {
       e.stopPropagation();
       if (!allCols[i].visible) return;
@@ -387,12 +359,156 @@ function renderColList() {
   });
 }
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
+   UNIQUE VALUES HELPER
+───────────────────────────────────────────── */
+function getUniqueValues(colIdx) {
+  const vals = new Set();
+  allRows.forEach(r => { const v = (r[colIdx] || '').trim(); if (v) vals.add(v); });
+  return [...vals].sort();
+}
+
+/* ─────────────────────────────────────────────
+   COLUMN STYLE PANEL
+───────────────────────────────────────────── */
+function renderColStyleList() {
+  const list = document.getElementById('col-style-list');
+  list.innerHTML = '';
+  const visCols = allCols.filter(c => c.visible);
+
+  if (!visCols.length) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:.875rem;margin:0">No visible columns yet — go to step 3 first.</p>';
+    return;
+  }
+
+  visCols.forEach(col => {
+    if (!colStyles[col.idx]) colStyles[col.idx] = { type: 'none', badgeMap: {} };
+    const st = colStyles[col.idx];
+
+    const row = document.createElement('div');
+    row.className = 'style-row';
+
+    /* ── Header row: name + selector ── */
+    const head = document.createElement('div');
+    head.className = 'style-row-head';
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'style-col-name';
+    nameEl.textContent = col.label;
+
+    const sel = document.createElement('select');
+    sel.className = 'style-select';
+    [
+      ['none',   'No style'],
+      ['badge',  '🏷 Badge — colour pills per value'],
+      ['bold',   'B  Bold'],
+      ['muted',  '···  Muted'],
+      ['mono',   '</>  Monospace'],
+      ['number', '#  Number (right-aligned monospace)'],
+    ].forEach(([val, txt]) => {
+      const o = document.createElement('option');
+      o.value = val; o.textContent = txt; o.selected = st.type === val;
+      sel.appendChild(o);
+    });
+
+    sel.addEventListener('change', () => {
+      st.type = sel.value;
+      if (st.type === 'badge') initBadgeMap(col.idx);
+      renderColStyleList();
+    });
+
+    head.appendChild(nameEl);
+    head.appendChild(sel);
+
+    /* ── Inline mini-preview for non-badge types ── */
+    if (st.type !== 'none' && st.type !== 'badge') {
+      const prev = document.createElement('div');
+      prev.className = 'style-preview-inline';
+      const sampleText = (getUniqueValues(col.idx)[0] || 'Sample value');
+      const sp = document.createElement('span');
+      sp.textContent = sampleText;
+      if (st.type === 'bold')   { sp.className = 'ex-bold'; }
+      if (st.type === 'muted')  { sp.className = 'ex-muted'; }
+      if (st.type === 'mono')   { sp.className = 'ex-mono'; }
+      if (st.type === 'number') { sp.className = 'ex-number'; }
+      const lbl = document.createElement('small');
+      lbl.style.color = 'var(--muted)';
+      lbl.textContent = 'Preview:';
+      prev.appendChild(lbl);
+      prev.appendChild(sp);
+      head.appendChild(prev);
+    }
+
+    row.appendChild(head);
+
+    /* ── Badge configurator ── */
+    if (st.type === 'badge') {
+      initBadgeMap(col.idx);
+      const cfg = document.createElement('div');
+      cfg.className = 'badge-config';
+
+      const uniqueVals = getUniqueValues(col.idx);
+      if (!uniqueVals.length) {
+        cfg.innerHTML = '<p style="color:var(--muted);font-size:.8rem;margin:0">No values found in this column.</p>';
+      } else {
+        uniqueVals.forEach(val => {
+          const pickedIdx = st.badgeMap[val] !== undefined ? st.badgeMap[val] : 0;
+          const preset    = PRESETS[pickedIdx];
+
+          const vrow = document.createElement('div');
+          vrow.className = 'badge-val-row';
+
+          const vname = document.createElement('span');
+          vname.className = 'badge-val-name';
+          vname.textContent = val;
+
+          const vprev = document.createElement('span');
+          vprev.className = 'badge-val-preview';
+          vprev.textContent = val;
+          vprev.style.background = preset.bg;
+          vprev.style.color = preset.color;
+
+          const swatches = document.createElement('div');
+          swatches.className = 'badge-swatches';
+          PRESETS.forEach((p, pi) => {
+            const sw = document.createElement('button');
+            sw.className = 'swatch' + (pi === pickedIdx ? ' picked' : '');
+            sw.style.background = p.bg;
+            sw.style.borderColor = pi === pickedIdx ? p.color : 'transparent';
+            sw.title = p.name;
+            sw.addEventListener('click', () => {
+              st.badgeMap[val] = pi;
+              renderColStyleList();
+            });
+            swatches.appendChild(sw);
+          });
+
+          vrow.appendChild(vname);
+          vrow.appendChild(vprev);
+          vrow.appendChild(swatches);
+          cfg.appendChild(vrow);
+        });
+      }
+      row.appendChild(cfg);
+    }
+
+    list.appendChild(row);
+  });
+}
+
+function initBadgeMap(colIdx) {
+  const st = colStyles[colIdx];
+  if (!st.badgeMap) st.badgeMap = {};
+  getUniqueValues(colIdx).forEach((v, i) => {
+    if (st.badgeMap[v] === undefined) st.badgeMap[v] = i % PRESETS.length;
+  });
+}
+
+/* ─────────────────────────────────────────────
    PREVIEW MODE TOGGLE
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 function setPreviewMode(mode) {
-  previewMode = mode;
-  previewPage = 1;
+  previewMode = mode; previewPage = 1;
   document.getElementById('tab-desktop').classList.toggle('active', mode === 'desktop');
   document.getElementById('tab-mobile').classList.toggle('active', mode === 'mobile');
   document.getElementById('desktop-view').hidden = mode !== 'desktop';
@@ -400,58 +516,54 @@ function setPreviewMode(mode) {
   renderPreview();
 }
 
-/* ────────────────────────────────────────────────
-   PREVIEW TABLE RENDERER
-──────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   PREVIEW TABLE
+───────────────────────────────────────────── */
 function renderPreview() {
   const isMob = previewMode === 'mobile';
   const visCols = allCols.filter(c => isMob ? (c.visible && c.mobileVisible) : c.visible);
-
   const totalPages = Math.ceil(allRows.length / PREVIEW_PZ) || 1;
   if (previewPage > totalPages) previewPage = 1;
   const start = (previewPage - 1) * PREVIEW_PZ;
   const pageRows = allRows.slice(start, start + PREVIEW_PZ);
-
   const theadId = isMob ? 'mob-thead' : 'row-thead';
   const tbodyId = isMob ? 'mob-tbody' : 'row-tbody';
 
-  // ── Header ──
+  // Header
   const thead = document.getElementById(theadId);
   thead.innerHTML = '';
   const htr = document.createElement('tr');
-  if (!isMob) {
-    const thN = document.createElement('th');
-    thN.className = 'row-num'; thN.textContent = '#';
-    htr.appendChild(thN);
-  }
-  visCols.forEach(col => {
-    const th = document.createElement('th');
-    th.textContent = col.label;
-    htr.appendChild(th);
-  });
+  if (!isMob) { const thN = document.createElement('th'); thN.className = 'row-num'; thN.textContent = '#'; htr.appendChild(thN); }
+  visCols.forEach(col => { const th = document.createElement('th'); th.textContent = col.label; htr.appendChild(th); });
   thead.appendChild(htr);
 
-  // ── Body ──
+  // Body
   const tbody = document.getElementById(tbodyId);
   tbody.innerHTML = '';
-  pageRows.forEach((row, pageIdx) => {
-    const actualIdx = start + pageIdx;
+  pageRows.forEach((row, pi) => {
+    const actualIdx = start + pi;
     const tr = document.createElement('tr');
     if (excluded.has(actualIdx)) tr.classList.add('excluded');
-
-    if (!isMob) {
-      const tdN = document.createElement('td');
-      tdN.className = 'row-num'; tdN.textContent = actualIdx + 1;
-      tr.appendChild(tdN);
-    }
+    if (!isMob) { const tdN = document.createElement('td'); tdN.className = 'row-num'; tdN.textContent = actualIdx + 1; tr.appendChild(tdN); }
     visCols.forEach(col => {
       const td = document.createElement('td');
-      td.textContent = row[col.idx] || '';
+      const val = row[col.idx] || '';
+      const st = colStyles[col.idx];
+      if (st && st.type === 'badge' && st.badgeMap && st.badgeMap[val] !== undefined) {
+        const p = PRESETS[st.badgeMap[val]];
+        const span = document.createElement('span');
+        span.className = 'badge-val-preview';
+        span.textContent = val; span.style.background = p.bg; span.style.color = p.color;
+        td.appendChild(span);
+      } else if (st && st.type === 'bold')   { td.innerHTML = '<strong>' + esc(val) + '</strong>'; }
+        else if (st && st.type === 'muted')  { td.textContent = val; td.className = 'ex-muted'; }
+        else if (st && st.type === 'mono')   { td.textContent = val; td.style.fontFamily = 'ui-monospace,monospace'; }
+        else if (st && st.type === 'number') { td.textContent = val; td.style.fontFamily = 'ui-monospace,monospace'; td.style.textAlign = 'right'; }
+        else { td.textContent = val; }
       tr.appendChild(td);
     });
     tr.addEventListener('click', () => {
-      if (excluded.has(actualIdx)) excluded.delete(actualIdx);
-      else excluded.add(actualIdx);
+      if (excluded.has(actualIdx)) excluded.delete(actualIdx); else excluded.add(actualIdx);
       tr.classList.toggle('excluded');
       updateExclPill();
     });
@@ -462,14 +574,10 @@ function renderPreview() {
   renderPreviewPagination(allRows.length, totalPages);
 }
 
-/* ────────────────────────────────────────────────
-   PREVIEW PAGINATION
-──────────────────────────────────────────────── */
 function renderPreviewPagination(total, totalPages) {
   const pag = document.getElementById('preview-pag');
   pag.innerHTML = '';
   if (totalPages <= 1) return;
-
   function btn(label, page, disabled, active) {
     const b = document.createElement('button');
     b.className = 'ppg-btn' + (active ? ' active' : '');
@@ -477,7 +585,6 @@ function renderPreviewPagination(total, totalPages) {
     if (!disabled && !active) b.addEventListener('click', () => { previewPage = page; renderPreview(); });
     return b;
   }
-
   pag.appendChild(btn('←', previewPage - 1, previewPage === 1, false));
   const pages = [];
   for (let p = 1; p <= totalPages; p++) {
@@ -485,49 +592,36 @@ function renderPreviewPagination(total, totalPages) {
     else if (pages[pages.length - 1] !== '…') pages.push('…');
   }
   pages.forEach(p => {
-    if (p === '…') {
-      const s = document.createElement('span');
-      s.className = 'ppg-ellipsis'; s.textContent = '…';
-      pag.appendChild(s);
-    } else {
-      pag.appendChild(btn(p, p, false, p === previewPage));
-    }
+    if (p === '…') { const s = document.createElement('span'); s.className = 'ppg-ellipsis'; s.textContent = '…'; pag.appendChild(s); }
+    else pag.appendChild(btn(p, p, false, p === previewPage));
   });
   pag.appendChild(btn('→', previewPage + 1, previewPage === totalPages, false));
 }
 
 function updateExclPill() {
   const pill = document.getElementById('excl-pill');
-  const n = excluded.size;
-  pill.hidden = n === 0;
-  if (n > 0) pill.textContent = n + ' excluded';
-  const incl = allRows.length - excluded.size;
+  pill.hidden = excluded.size === 0;
+  if (excluded.size) pill.textContent = excluded.size + ' excluded';
   document.getElementById('row-summary').textContent =
-    incl + ' of ' + allRows.length + ' rows will be included in the output.';
+    (allRows.length - excluded.size) + ' of ' + allRows.length + ' rows will be included in the output.';
 }
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    HTML ESCAPE
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 function esc(str) {
-  return String(str || '').replace(/[&<>"']/g,
-    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    OUTPUT GENERATOR
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 function generateOutput() {
   const visCols = allCols.filter(c => c.visible);
   if (!visCols.length) { alert('Select at least one column.'); return; }
 
-  // Indices (within visCols) of columns hidden on mobile
   const mobHidden = visCols.map((c, i) => c.mobileVisible ? null : i).filter(i => i !== null);
-
-  const rows = allRows
-    .filter((_, i) => !excluded.has(i))
-    .map(r => visCols.map(c => (r[c.idx] || '').trim()));
-
+  const rows = allRows.filter((_, i) => !excluded.has(i)).map(r => visCols.map(c => (r[c.idx] || '').trim()));
   if (!rows.length) { alert('No rows remain after exclusions.'); return; }
 
   const title    = document.getElementById('tbl-title').value.trim();
@@ -537,20 +631,36 @@ function generateOutput() {
   const headers  = visCols.map(c => c.label);
   const uid      = 'nt' + Math.random().toString(36).slice(2, 8);
 
-  const out = buildCSS(uid, mobHidden)
-    + '\n\n' + buildMarkup(uid, title, subtitle, source, headers)
-    + '\n\n' + buildScript(uid, rows, pageSize);
+  // Build styles map keyed by visible-column index (0-based)
+  const stylesMap = {};
+  visCols.forEach((col, vi) => {
+    const st = colStyles[col.idx];
+    if (!st || st.type === 'none') return;
+    if (st.type === 'badge') {
+      stylesMap[vi] = { type: 'badge', map: Object.assign({}, st.badgeMap) };
+    } else {
+      stylesMap[vi] = { type: st.type };
+    }
+  });
 
-  document.getElementById('output-code').value = out;
+  document.getElementById('output-code').value =
+    buildCSS(uid, mobHidden, stylesMap)
+    + '\n\n' + buildMarkup(uid, title, subtitle, source, headers)
+    + '\n\n' + buildScript(uid, rows, pageSize, stylesMap);
 }
 
-/* ── CSS block ── */
-function buildCSS(u, mobHidden) {
-  let mobileHideRule = '';
-  if (mobHidden.length) {
-    const sels = mobHidden.map(i => `.${u}-c${i}`).join(',');
-    mobileHideRule = `@media(max-width:768px){${sels}{display:none;}}`;
-  }
+/* ── CSS ── */
+function buildCSS(u, mobHidden, stylesMap) {
+  // Badge preset colours
+  const presetCSS = PRESETS.map((p, i) =>
+    `.${u}-bg${i}{background:${p.bg};color:${p.color};}`
+  ).join('');
+
+  // Mobile hide rules
+  const mobileRule = mobHidden.length
+    ? `@media(max-width:768px){${mobHidden.map(i => `.${u}-c${i}`).join(',')}{display:none;}}`
+    : '';
+
   return `<style>
 .${u}{font-family:var(--font-body,Georgia,serif);max-width:100%;color:var(--color-darkgrey,#15171a);grid-column:full-start/full-end;padding-left:50px;padding-right:50px;}
 @media(max-width:768px){.${u}{padding-left:0;padding-right:0;}}
@@ -573,6 +683,8 @@ function buildCSS(u, mobHidden) {
 .${u}-tw tbody tr:hover{background:var(--ntr-home-accent-strong,#edf7fc);}
 .${u}-tw td{padding:9px 12px;vertical-align:top;line-height:1.45;}
 .${u}-tw td.${u}-name{font-family:var(--font-heading,sans-serif);font-weight:600;}
+.${u}-badge{display:inline-block;padding:2px 9px;font-family:var(--font-heading,sans-serif);font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:.82em;}
+${presetCSS}
 .${u}-empty{text-align:center;padding:40px;color:var(--color-midgrey,#738a94);font-style:italic;display:none;}
 .${u}-pag{display:flex;align-items:center;gap:4px;margin-top:12px;flex-wrap:wrap;}
 .${u}-pb{min-width:34px;height:34px;padding:0 8px;border:1px solid var(--color-lightgrey,#c5d2d9);background:#fff;font-family:var(--font-heading,sans-serif);color:var(--color-darkgrey,#15171a);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
@@ -581,30 +693,21 @@ function buildCSS(u, mobHidden) {
 .${u}-pb:disabled{opacity:.35;cursor:default;}
 .${u}-el{font-family:var(--font-mono,monospace);color:var(--color-midgrey,#738a94);padding:0 4px;}
 .${u}-ft{font-family:var(--font-caption,serif);color:var(--color-midgrey,#738a94);margin-top:10px;padding:8px 0 4px;border-top:1px solid rgba(12,24,32,.08);}
-${mobileHideRule}
+${mobileRule}
 </style>`;
 }
 
-/* ── HTML markup block ── */
+/* ── Markup ── */
 function buildMarkup(u, title, subtitle, source, headers) {
-  const headerRow = headers.map((h, i) =>
-    `<th class="${u}-th ${u}-c${i}">${esc(h)}</th>`
-  ).join('');
-
+  const headerRow = headers.map((h, i) => `<th class="${u}-th ${u}-c${i}">${esc(h)}</th>`).join('');
   return `<div class="${u}">
-  ${title ? `<div class="${u}-hd">
-    <h2>${esc(title)}</h2>
-    ${subtitle ? `<p>${esc(subtitle)}</p>` : ''}
-  </div>` : ''}
+  ${title ? `<div class="${u}-hd"><h2>${esc(title)}</h2>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div>` : ''}
   <div class="${u}-ctrl">
     <input id="${u}-search" type="text" placeholder="Search…" aria-label="Search table">
     <span class="${u}-count" id="${u}-count"></span>
   </div>
   <div class="${u}-tw">
-    <table>
-      <thead><tr>${headerRow}</tr></thead>
-      <tbody id="${u}-tbody"></tbody>
-    </table>
+    <table><thead><tr>${headerRow}</tr></thead><tbody id="${u}-tbody"></tbody></table>
     <div class="${u}-empty" id="${u}-empty">No matching records found.</div>
   </div>
   <div class="${u}-pag" id="${u}-pag"></div>
@@ -612,11 +715,23 @@ function buildMarkup(u, title, subtitle, source, headers) {
 </div>`;
 }
 
-/* ── Self-contained JS block (column classes on TD, pagination included) ── */
-function buildScript(u, rows, pageSize) {
+/* ── Script ── */
+function buildScript(u, rows, pageSize, stylesMap) {
+  // Bake in only the preset colours needed
+  const usedPresets = new Set();
+  Object.values(stylesMap).forEach(st => {
+    if (st.type === 'badge') Object.values(st.map).forEach(i => usedPresets.add(i));
+  });
+  const presetsJSON = JSON.stringify(
+    PRESETS.map((p, i) => usedPresets.has(i) ? { bg: p.bg, c: p.color } : null)
+  );
+
   return `<script>
 (function(){
 var U='${u}',ROWS=${JSON.stringify(rows)},PZ=${pageSize},PAGE=1,SC=-1,SD=1;
+var STYLES=${JSON.stringify(stylesMap)};
+var PR=${presetsJSON};
+function escH(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function filt(){
   var q=document.getElementById(U+'-search').value.toLowerCase().trim();
   var r=ROWS.slice();
@@ -627,6 +742,23 @@ function filt(){
     return av<bv?-SD:av>bv?SD:0;
   });
   return r;
+}
+function applyCell(td,val,ci){
+  var st=STYLES[ci];
+  if(!st){td.textContent=val;return;}
+  if(st.type==='badge'&&st.map&&st.map[val]!==undefined){
+    var pi=st.map[val],p=PR[pi];
+    if(p){td.innerHTML='<span class="'+U+'-badge '+U+'-bg'+pi+'">'+escH(val)+'</span>';}
+    else{td.textContent=val;}
+  }else if(st.type==='bold'){
+    td.innerHTML='<strong>'+escH(val)+'</strong>';
+  }else if(st.type==='muted'){
+    td.textContent=val;td.style.opacity='.6';
+  }else if(st.type==='mono'){
+    td.textContent=val;td.style.fontFamily='ui-monospace,monospace';
+  }else if(st.type==='number'){
+    td.textContent=val;td.style.fontFamily='ui-monospace,monospace';td.style.textAlign='right';
+  }else{td.textContent=val;}
 }
 function render(){
   var f=filt(),tot=f.length,tp=Math.ceil(tot/PZ)||1;
@@ -642,8 +774,8 @@ function render(){
     var tr=document.createElement('tr');
     r.forEach(function(c,ci){
       var td=document.createElement('td');
-      td.textContent=c;
       td.className=U+'-c'+ci+(ci===0?' '+U+'-name':'');
+      applyCell(td,c,ci);
       tr.appendChild(td);
     });
     tb.appendChild(tr);
@@ -687,9 +819,9 @@ render();
 <\/script>`;
 }
 
-/* ────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
    COPY
-──────────────────────────────────────────────── */
+───────────────────────────────────────────── */
 function copyOutput() {
   const txt = document.getElementById('output-code').value;
   if (!txt) { generateOutput(); return; }
