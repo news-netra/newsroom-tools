@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Table Builder – Newsroom Tools</title>
+  <link rel="stylesheet" href="../assets/site.css" />
+  <style>
+    /* ── Drop zone ── */
+    .drop-zone {
+      display: block;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      color: var(--muted);
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: #eef5ff;
+    }
+    .drop-zone input[type="file"] { display: none; }
+    .drop-zone strong { color: var(--text); }
+
+    /* ── Panels ── */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 14px;
+      color: var(--text);
+    }
+
+    /* ── Column toggles ── */
+    .col-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .col-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--panel);
+      font-size: 0.85rem;
+      transition: border-color .1s, background .1s;
+    }
+    .col-chip.on  { border-color: var(--accent); background: #eef5ff; color: var(--accent); font-weight: 600; }
+    .col-chip.off { opacity: .5; }
+    .col-chip input[type="checkbox"] { display: none; }
+
+    /* ── Row preview ── */
+    .row-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 10px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    table.row-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .row-table thead th {
+      position: sticky; top: 0; z-index: 1;
+      background: var(--accent); color: #fff;
+      padding: 8px 10px; text-align: left;
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em;
+      white-space: nowrap;
+    }
+    .row-table tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
+    .row-table tbody tr:nth-child(even) { background: #f7f9fb; }
+    .row-table tbody tr:hover { background: #ddeeff; }
+    .row-table tbody tr.excluded { background: #fff5f5 !important; }
+    .row-table tbody tr.excluded td { opacity: .45; text-decoration: line-through; }
+    .row-table td { padding: 7px 10px; }
+    .row-num { color: var(--muted); font-size: 0.72rem; width: 32px; text-align: center; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px; margin-bottom: 8px;
+    }
+    .excl-pill {
+      display: inline-block; padding: 2px 10px; border-radius: 20px;
+      background: #ffe4e4; color: #b91c1c; font-size: 0.8rem; font-weight: 700;
+    }
+    .hint { font-size: 0.8rem; color: var(--muted); margin: 6px 0 0; }
+
+    /* ── Output ── */
+    #output-code {
+      min-height: 140px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.75rem;
+      resize: vertical;
+    }
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .row.two { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <nav class="top-nav">
+    <a href="../index.html" class="btn secondary">← Back to tools</a>
+  </nav>
+
+  <header>
+    <h1>Table Builder</h1>
+    <p class="lede">Upload a CSV, configure columns, exclude rows, then copy the embed code — ready to paste into Ghost.</p>
+  </header>
+
+  <!-- ── Step 1: Upload ── -->
+  <div class="panel" id="step-upload">
+    <p class="panel-title">1 · Upload CSV</p>
+    <label class="drop-zone" id="drop-zone" for="csv-file">
+      <input type="file" id="csv-file" accept=".csv,.tsv,.txt" />
+      <div id="drop-label">
+        <strong>Click to choose a file</strong> or drag it here<br>
+        <small style="margin-top:4px;display:block">.csv · .tsv · .txt — first row must be headers</small>
+      </div>
+    </label>
+    <details style="margin-top:14px">
+      <summary style="cursor:pointer;color:var(--accent);font-weight:600">Or paste CSV text</summary>
+      <textarea id="csv-paste" style="margin-top:10px;min-height:120px;width:100%;box-sizing:border-box;font-family:monospace" placeholder="Paste CSV here…"></textarea>
+      <div style="margin-top:8px">
+        <button class="btn secondary" onclick="parsePasted()">Parse pasted CSV</button>
+      </div>
+    </details>
+  </div>
+
+  <!-- ── Steps 2–5 (hidden until data loaded) ── -->
+  <div id="config-sections" hidden>
+
+    <!-- Step 2: Table settings -->
+    <div class="panel">
+      <p class="panel-title">2 · Table settings</p>
+      <div class="tool-form">
+        <div class="row">
+          <label for="tbl-title">Headline</label>
+          <input type="text" id="tbl-title" placeholder="e.g. 120 Indians Pushed Into Bangladesh" />
+        </div>
+        <div class="row">
+          <label for="tbl-subtitle">Deck / subtitle</label>
+          <input type="text" id="tbl-subtitle" placeholder="A short description of the data…" />
+        </div>
+        <div class="row two">
+          <div>
+            <label for="tbl-source">Source line</label>
+            <input type="text" id="tbl-source" placeholder="e.g. Data compiled by Bangladesh Border Guard" />
+          </div>
+          <div>
+            <label for="tbl-pagesize">Rows per page</label>
+            <select id="tbl-pagesize">
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20" selected>20</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Column manager -->
+    <div class="panel">
+      <p class="panel-title">3 · Choose columns</p>
+      <p style="color:var(--muted);margin:0 0 10px;font-size:0.875rem">Click to show or hide. The first visible column will be bolded as the primary field.</p>
+      <div class="col-list" id="col-list"></div>
+    </div>
+
+    <!-- Step 4: Exclude rows -->
+    <div class="panel">
+      <p class="panel-title">4 · Exclude rows</p>
+      <div class="status-bar">
+        <p style="margin:0;color:var(--muted);font-size:0.875rem">Click any row to exclude it from the output. Click again to restore.</p>
+        <span class="excl-pill" id="excl-pill" hidden>0 excluded</span>
+      </div>
+      <div class="row-table-wrap">
+        <table class="row-table">
+          <thead id="row-thead"></thead>
+          <tbody id="row-tbody"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="row-summary"></p>
+    </div>
+
+    <!-- Step 5: Generate -->
+    <div class="panel">
+      <p class="panel-title">5 · Generate embed</p>
+      <div class="action-row">
+        <button class="btn" onclick="generateOutput()">Generate HTML</button>
+        <button class="btn secondary" onclick="copyOutput()">Copy HTML</button>
+      </div>
+      <div class="output-wrap">
+        <label for="output-code">Embed code — paste into a Ghost HTML block</label>
+        <textarea id="output-code" readonly placeholder="Click 'Generate HTML' above…"></textarea>
+      </div>
+    </div>
+
+  </div><!-- /config-sections -->
+</div><!-- /container -->
+
+<script>
+/* ────────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────────── */
+let allRows = [];   // array of arrays (raw data, no header)
+let allCols = [];   // [{idx, label, visible}]
+const excluded = new Set(); // indices into allRows
+
+/* ────────────────────────────────────────────────
+   CSV PARSER — handles quotes, \r\n, tab/semicolon
+──────────────────────────────────────────────── */
+function parseCSV(text) {
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+  const firstLine = text.split('\n')[0];
+  const tabs = (firstLine.match(/\t/g) || []).length;
+  const semis = (firstLine.match(/;/g) || []).length;
+  const commas = (firstLine.match(/,/g) || []).length;
+  const delim = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
+
+  const rows = [];
+  let row = [], field = '', inQ = false;
+
+  for (let i = 0; i <= text.length; i++) {
+    const ch = i < text.length ? text[i] : '\n';
+    if (ch === '"') {
+      if (inQ && text[i + 1] === '"') { field += '"'; i++; }
+      else inQ = !inQ;
+    } else if (ch === delim && !inQ) {
+      row.push(field.trim()); field = '';
+    } else if (ch === '\n' && !inQ) {
+      row.push(field.trim()); field = '';
+      if (row.some(f => f !== '')) rows.push(row);
+      row = [];
+    } else {
+      field += ch;
+    }
+  }
+  return rows;
+}
+
+/* ────────────────────────────────────────────────
+   LOAD DATA
+──────────────────────────────────────────────── */
+function loadData(lines) {
+  if (lines.length < 2) { alert('CSV must have at least a header row and one data row.'); return; }
+
+  const headers = lines[0];
+  allRows = lines.slice(1);
+  allCols = headers.map((h, i) => ({ idx: i, label: h || `Column ${i + 1}`, visible: true }));
+  excluded.clear();
+
+  document.getElementById('config-sections').hidden = false;
+  document.getElementById('drop-label').innerHTML =
+    '<strong>✓ ' + allRows.length + ' rows loaded</strong> · ' + allCols.length + ' columns · <span style="color:var(--accent)">drop another file to replace</span>';
+
+  renderColList();
+  renderRowTable();
+}
+
+/* ────────────────────────────────────────────────
+   FILE / PASTE INPUT
+──────────────────────────────────────────────── */
+document.getElementById('csv-file').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => loadData(parseCSV(ev.target.result));
+  reader.readAsText(file, 'UTF-8');
+});
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => loadData(parseCSV(ev.target.result));
+  reader.readAsText(file, 'UTF-8');
+});
+
+function parsePasted() {
+  const text = document.getElementById('csv-paste').value.trim();
+  if (!text) return;
+  loadData(parseCSV(text));
+}
+
+/* ────────────────────────────────────────────────
+   COLUMN CHIPS
+──────────────────────────────────────────────── */
+function renderColList() {
+  const list = document.getElementById('col-list');
+  list.innerHTML = '';
+  allCols.forEach((col, i) => {
+    const chip = document.createElement('label');
+    chip.className = 'col-chip ' + (col.visible ? 'on' : 'off');
+    chip.innerHTML = `<input type="checkbox" ${col.visible ? 'checked' : ''} />${esc(col.label)}`;
+    chip.querySelector('input').addEventListener('change', e => {
+      allCols[i].visible = e.target.checked;
+      chip.className = 'col-chip ' + (col.visible ? 'on' : 'off');
+      renderRowTable();
+    });
+    list.appendChild(chip);
+  });
+}
+
+/* ────────────────────────────────────────────────
+   ROW PREVIEW TABLE
+──────────────────────────────────────────────── */
+function renderRowTable() {
+  const visCols = allCols.filter(c => c.visible);
+
+  // Header
+  const thead = document.getElementById('row-thead');
+  thead.innerHTML = '';
+  const tr = document.createElement('tr');
+  const thNum = document.createElement('th');
+  thNum.textContent = '#'; thNum.className = 'row-num';
+  tr.appendChild(thNum);
+  visCols.forEach(col => {
+    const th = document.createElement('th');
+    th.textContent = col.label;
+    tr.appendChild(th);
+  });
+  thead.appendChild(tr);
+
+  // Body
+  const tbody = document.getElementById('row-tbody');
+  tbody.innerHTML = '';
+  allRows.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    if (excluded.has(i)) tr.classList.add('excluded');
+
+    const tdN = document.createElement('td');
+    tdN.className = 'row-num'; tdN.textContent = i + 1;
+    tr.appendChild(tdN);
+
+    visCols.forEach(col => {
+      const td = document.createElement('td');
+      td.textContent = row[col.idx] || '';
+      tr.appendChild(td);
+    });
+
+    tr.addEventListener('click', () => {
+      if (excluded.has(i)) excluded.delete(i);
+      else excluded.add(i);
+      tr.classList.toggle('excluded');
+      updateExclPill();
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  updateExclPill();
+}
+
+function updateExclPill() {
+  const pill = document.getElementById('excl-pill');
+  const n = excluded.size;
+  if (n > 0) {
+    pill.hidden = false;
+    pill.textContent = n + ' excluded';
+  } else {
+    pill.hidden = true;
+  }
+  const summary = document.getElementById('row-summary');
+  const vis = allRows.length - excluded.size;
+  summary.textContent = vis + ' of ' + allRows.length + ' rows will be included in the output.';
+}
+
+/* ────────────────────────────────────────────────
+   HTML ESCAPE
+──────────────────────────────────────────────── */
+function esc(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ────────────────────────────────────────────────
+   OUTPUT GENERATOR
+──────────────────────────────────────────────── */
+function generateOutput() {
+  const visCols = allCols.filter(c => c.visible);
+  if (!visCols.length) { alert('Select at least one column.'); return; }
+
+  const rows = allRows
+    .filter((_, i) => !excluded.has(i))
+    .map(r => visCols.map(c => (r[c.idx] || '').trim()));
+
+  if (!rows.length) { alert('No rows remaining after exclusions.'); return; }
+
+  const title    = document.getElementById('tbl-title').value.trim();
+  const subtitle = document.getElementById('tbl-subtitle').value.trim();
+  const source   = document.getElementById('tbl-source').value.trim();
+  const pageSize = parseInt(document.getElementById('tbl-pagesize').value) || 20;
+  const headers  = visCols.map(c => c.label);
+
+  // Unique prefix so multiple embeds on one page don't clash
+  const uid = 'nt' + Math.random().toString(36).slice(2, 8);
+
+  const css = buildCSS(uid);
+  const markup = buildMarkup(uid, title, subtitle, source, headers);
+  const script = buildScript(uid, rows, headers, pageSize, source);
+
+  document.getElementById('output-code').value = css + '\n\n' + markup + '\n\n' + script;
+}
+
+/* ── CSS block ── */
+function buildCSS(u) {
+  return `<style>
+.${u}{font-family:var(--font-body,Georgia,serif);max-width:100%;color:var(--color-darkgrey,#15171a);grid-column:full-start/full-end;padding-left:50px;padding-right:50px;}
+@media(max-width:768px){.${u}{padding-left:0;padding-right:0;}}
+.${u}-hd{border-top:4px solid var(--color-primary,#00243e);padding:24px 0 16px;margin-bottom:8px;}
+.${u}-hd h2{font-family:var(--font-heading,sans-serif);font-weight:700;margin:0 0 6px;line-height:1.2;color:var(--color-primary,#00243e);}
+.${u}-hd p{font-family:var(--font-caption,serif);color:var(--ntr-home-muted,#617784);margin:0;}
+.${u}-ctrl{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0;}
+.${u}-ctrl input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--color-lightgrey,#c5d2d9);font-family:var(--font-heading,sans-serif);outline:none;background:#fff;color:var(--color-darkgrey,#15171a);}
+.${u}-ctrl input:focus{border-color:var(--color-primary,#00243e);}
+.${u}-count{font-family:var(--font-mono,monospace);color:var(--ntr-home-muted,#617784);white-space:nowrap;}
+.${u}-tw{overflow-x:auto;border:1px solid rgba(12,24,32,.12);}
+.${u}-tw table{width:100%;border-collapse:collapse;}
+.${u}-tw thead th{background:var(--color-primary,#00243e);color:#fff;text-align:left;padding:10px 12px;font-family:var(--font-heading,sans-serif);font-weight:600;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;}
+.${u}-tw thead th:hover{background:var(--color-darkgrey,#15171a);}
+.${u}-tw thead th.asc::after{content:' ▲';opacity:.8;}
+.${u}-tw thead th.desc::after{content:' ▼';opacity:.8;}
+.${u}-tw thead th:not(.asc):not(.desc)::after{content:' ⇅';opacity:.35;}
+.${u}-tw tbody tr{border-bottom:1px solid rgba(12,24,32,.08);}
+.${u}-tw tbody tr:nth-child(even){background:var(--ntr-home-accent,#f8fcff);}
+.${u}-tw tbody tr:hover{background:var(--ntr-home-accent-strong,#edf7fc);}
+.${u}-tw td{padding:9px 12px;vertical-align:top;line-height:1.45;}
+.${u}-tw td.${u}-name{font-family:var(--font-heading,sans-serif);font-weight:600;}
+.${u}-empty{text-align:center;padding:40px;color:var(--color-midgrey,#738a94);font-style:italic;display:none;}
+.${u}-pag{display:flex;align-items:center;gap:4px;margin-top:12px;flex-wrap:wrap;}
+.${u}-pb{min-width:34px;height:34px;padding:0 8px;border:1px solid var(--color-lightgrey,#c5d2d9);background:#fff;font-family:var(--font-heading,sans-serif);color:var(--color-darkgrey,#15171a);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
+.${u}-pb:hover:not(:disabled){background:var(--ntr-home-accent,#f8fcff);border-color:var(--color-primary,#00243e);}
+.${u}-pb.on{background:var(--color-primary,#00243e);border-color:var(--color-primary,#00243e);color:#fff;font-weight:700;cursor:default;}
+.${u}-pb:disabled{opacity:.35;cursor:default;}
+.${u}-el{font-family:var(--font-mono,monospace);color:var(--color-midgrey,#738a94);padding:0 4px;}
+.${u}-ft{font-family:var(--font-caption,serif);color:var(--color-midgrey,#738a94);margin-top:10px;padding:8px 0 4px;border-top:1px solid rgba(12,24,32,.08);}
+</style>`;
+}
+
+/* ── HTML markup block ── */
+function buildMarkup(u, title, subtitle, source, headers) {
+  const headerRow = headers.map(h =>
+    `<th class="${u}-th">${esc(h)}</th>`
+  ).join('');
+
+  return `<div class="${u}">
+  ${title ? `<div class="${u}-hd">
+    <h2>${esc(title)}</h2>
+    ${subtitle ? `<p>${esc(subtitle)}</p>` : ''}
+  </div>` : ''}
+  <div class="${u}-ctrl">
+    <input id="${u}-search" type="text" placeholder="Search…" aria-label="Search table">
+    <span class="${u}-count" id="${u}-count"></span>
+  </div>
+  <div class="${u}-tw">
+    <table>
+      <thead><tr>${headerRow}</tr></thead>
+      <tbody id="${u}-tbody"></tbody>
+    </table>
+    <div class="${u}-empty" id="${u}-empty">No matching records found.</div>
+  </div>
+  <div class="${u}-pag" id="${u}-pag"></div>
+  ${source ? `<div class="${u}-ft">${esc(source)}</div>` : ''}
+</div>`;
+}
+
+/* ── Self-contained JS block ── */
+function buildScript(u, rows, headers, pageSize, source) {
+  const rowsJSON = JSON.stringify(rows);
+  const hdrsJSON = JSON.stringify(headers);
+
+  return `<script>
+(function(){
+var U='${u}',ROWS=${rowsJSON},HDRS=${hdrsJSON},PZ=${pageSize},PAGE=1,SC=-1,SD=1;
+function filt(){
+  var q=document.getElementById(U+'-search').value.toLowerCase().trim();
+  var r=ROWS.slice();
+  if(q)r=r.filter(function(x){return x.join(' ').toLowerCase().indexOf(q)>=0;});
+  if(SC>=0)r.sort(function(a,b){
+    var av=a[SC],bv=b[SC];
+    var an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn)){av=an;bv=bn;}else{av=av.toLowerCase();bv=bv.toLowerCase();}
+    return av<bv?-SD:av>bv?SD:0;
+  });
+  return r;
+}
+function render(){
+  var f=filt(),tot=f.length,tp=Math.ceil(tot/PZ)||1;
+  if(PAGE>tp)PAGE=1;
+  var s=(PAGE-1)*PZ,e=Math.min(s+PZ,tot),sl=f.slice(s,e);
+  var tb=document.getElementById(U+'-tbody');
+  tb.innerHTML='';
+  var em=document.getElementById(U+'-empty');
+  if(!tot){em.style.display='';document.getElementById(U+'-count').textContent='0 records';pag(0,1);return;}
+  em.style.display='none';
+  document.getElementById(U+'-count').textContent=(s+1)+'–'+e+' of '+tot;
+  sl.forEach(function(r){
+    var tr=document.createElement('tr');
+    r.forEach(function(c,ci){
+      var td=document.createElement('td');
+      td.textContent=c;
+      if(ci===0)td.className=U+'-name';
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  pag(tot,tp);
+}
+function pag(tot,tp){
+  var p=document.getElementById(U+'-pag');
+  p.innerHTML='';
+  if(tp<=1)return;
+  function btn(lbl,pg,dis,on){
+    var b=document.createElement('button');
+    b.className=U+'-pb'+(on?' on':'');
+    b.textContent=lbl;b.disabled=dis;
+    if(!dis&&!on)b.onclick=function(){PAGE=pg;render();};
+    return b;
+  }
+  p.appendChild(btn('←',PAGE-1,PAGE===1,false));
+  var pages=[];
+  for(var i=1;i<=tp;i++){
+    if(i===1||i===tp||(i>=PAGE-1&&i<=PAGE+1))pages.push(i);
+    else if(pages[pages.length-1]!=='…')pages.push('…');
+  }
+  pages.forEach(function(pg){
+    if(pg==='…'){var s=document.createElement('span');s.className=U+'-el';s.textContent='…';p.appendChild(s);}
+    else p.appendChild(btn(pg,pg,false,pg===PAGE));
+  });
+  p.appendChild(btn('→',PAGE+1,PAGE===tp,false));
+}
+document.querySelectorAll('.'+U+'-th').forEach(function(th,i){
+  th.addEventListener('click',function(){
+    document.querySelectorAll('.'+U+'-th').forEach(function(t){t.classList.remove('asc','desc');});
+    if(SC===i){SD*=-1;}else{SC=i;SD=1;}
+    th.classList.add(SD===1?'asc':'desc');
+    PAGE=1;render();
+  });
+});
+document.getElementById(U+'-search').addEventListener('input',function(){PAGE=1;render();});
+render();
+})();
+<\/script>`;
+}
+
+/* ────────────────────────────────────────────────
+   COPY OUTPUT
+──────────────────────────────────────────────── */
+function copyOutput() {
+  const txt = document.getElementById('output-code').value;
+  if (!txt) { generateOutput(); return; }
+  navigator.clipboard.writeText(txt)
+    .then(() => alert('Copied to clipboard!'))
+    .catch(() => { document.getElementById('output-code').select(); document.execCommand('copy'); });
+}
+</script>
+</body>
+</html>
