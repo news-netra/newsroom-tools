@@ -17,54 +17,77 @@
       transition: border-color .15s, background .15s;
       color: var(--muted);
     }
-    .drop-zone:hover, .drop-zone.drag-over {
-      border-color: var(--accent);
-      background: #eef5ff;
-    }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: #eef5ff; }
     .drop-zone input[type="file"] { display: none; }
     .drop-zone strong { color: var(--text); }
 
     /* ── Panels ── */
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-top: 16px;
-    }
-    .panel-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin: 0 0 14px;
-      color: var(--text);
-    }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-top: 16px; }
+    .panel-title { font-size: 1rem; font-weight: 700; margin: 0 0 14px; color: var(--text); }
 
-    /* ── Column toggles ── */
+    /* ── Column chips (label + mobile toggle) ── */
     .col-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-    .col-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      cursor: pointer;
-      user-select: none;
-      background: var(--panel);
-      font-size: 0.85rem;
-      transition: border-color .1s, background .1s;
+    .col-chip-group {
+      display: inline-flex; align-items: stretch;
+      border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
+      transition: border-color .1s;
     }
-    .col-chip.on  { border-color: var(--accent); background: #eef5ff; color: var(--accent); font-weight: 600; }
-    .col-chip.off { opacity: .5; }
-    .col-chip input[type="checkbox"] { display: none; }
+    .col-chip-group.col-on  { border-color: var(--accent); }
+    .col-chip-group.col-off { opacity: .45; }
+    .col-chip-label {
+      padding: 5px 10px 5px 13px;
+      cursor: pointer; user-select: none; font-size: 0.85rem;
+      transition: background .1s, color .1s;
+    }
+    .col-chip-group.col-on .col-chip-label { background: #eef5ff; color: var(--accent); font-weight: 600; }
+    .col-mob-btn {
+      padding: 5px 9px;
+      border: none; border-left: 1px solid var(--border);
+      background: transparent; cursor: pointer; font-size: 0.82rem; line-height: 1;
+      transition: background .1s; display: flex; align-items: center;
+      title: "Toggle mobile visibility";
+    }
+    .col-mob-btn:hover:not(:disabled) { background: #f0f4f8; }
+    .col-mob-btn.mob-on  { color: var(--accent); }
+    .col-mob-btn.mob-off { color: var(--muted); filter: grayscale(1); opacity: .55; }
+    .col-mob-btn:disabled { cursor: default; opacity: .25; }
 
-    /* ── Row preview ── */
-    .row-table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-top: 10px;
-      max-height: 420px;
-      overflow-y: auto;
+    /* ── Preview tabs (Desktop / Mobile) ── */
+    .preview-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 12px;
     }
+    .preview-tabs {
+      display: inline-flex;
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    }
+    .preview-tab {
+      padding: 6px 18px; background: transparent; border: none;
+      cursor: pointer; font-size: 0.85rem; font-weight: 600;
+      color: var(--muted); transition: background .1s, color .1s;
+    }
+    .preview-tab + .preview-tab { border-left: 1px solid var(--border); }
+    .preview-tab.active { background: var(--accent); color: #fff; }
+
+    /* ── Exclusion pill ── */
+    .excl-pill {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      background: #ffe4e4; color: #b91c1c; font-size: 0.8rem; font-weight: 700;
+    }
+
+    /* ── Mobile simulation frame ── */
+    .mobile-sim {
+      max-width: 390px;
+      border: 8px solid #1a1a1a;
+      border-radius: 28px;
+      overflow: hidden;
+      margin: 0 auto;
+      box-shadow: 0 12px 40px rgba(0,0,0,.2);
+    }
+    .mobile-sim-inner { overflow-x: auto; background: #fff; }
+
+    /* ── Row preview table ── */
+    .row-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
     table.row-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
     .row-table thead th {
       position: sticky; top: 0; z-index: 1;
@@ -77,34 +100,31 @@
     .row-table tbody tr:nth-child(even) { background: #f7f9fb; }
     .row-table tbody tr:hover { background: #ddeeff; }
     .row-table tbody tr.excluded { background: #fff5f5 !important; }
-    .row-table tbody tr.excluded td { opacity: .45; text-decoration: line-through; }
+    .row-table tbody tr.excluded td { opacity: .4; text-decoration: line-through; }
     .row-table td { padding: 7px 10px; }
-    .row-num { color: var(--muted); font-size: 0.72rem; width: 32px; text-align: center; }
+    .row-num { color: var(--muted); font-size: 0.72rem; width: 28px; text-align: center; }
 
-    /* ── Status bar ── */
-    .status-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 8px; margin-bottom: 8px;
+    /* ── Preview pagination ── */
+    .preview-pag { display: flex; align-items: center; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+    .ppg-btn {
+      min-width: 30px; height: 30px; padding: 0 8px;
+      border: 1px solid var(--border); border-radius: 6px;
+      background: var(--panel); cursor: pointer; font-size: 0.8rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--text); transition: background .1s, border-color .1s;
     }
-    .excl-pill {
-      display: inline-block; padding: 2px 10px; border-radius: 20px;
-      background: #ffe4e4; color: #b91c1c; font-size: 0.8rem; font-weight: 700;
-    }
-    .hint { font-size: 0.8rem; color: var(--muted); margin: 6px 0 0; }
+    .ppg-btn:hover:not(:disabled) { background: #eef5ff; border-color: var(--accent); }
+    .ppg-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; cursor: default; }
+    .ppg-btn:disabled { opacity: .35; cursor: default; }
+    .ppg-ellipsis { color: var(--muted); padding: 0 2px; font-size: 0.8rem; }
+
+    .hint { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
 
     /* ── Output ── */
-    #output-code {
-      min-height: 140px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.75rem;
-      resize: vertical;
-    }
+    #output-code { min-height: 140px; font-family: ui-monospace, monospace; font-size: 0.75rem; resize: vertical; }
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
 
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .row.two { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 600px) { .row.two { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -116,7 +136,7 @@
 
   <header>
     <h1>Table Builder</h1>
-    <p class="lede">Upload a CSV, configure columns, exclude rows, then copy the embed code — ready to paste into Ghost.</p>
+    <p class="lede">Upload a CSV, configure columns, preview on desktop and mobile, exclude rows, then copy the embed code for Ghost.</p>
   </header>
 
   <!-- ── Step 1: Upload ── -->
@@ -132,9 +152,7 @@
     <details style="margin-top:14px">
       <summary style="cursor:pointer;color:var(--accent);font-weight:600">Or paste CSV text</summary>
       <textarea id="csv-paste" style="margin-top:10px;min-height:120px;width:100%;box-sizing:border-box;font-family:monospace" placeholder="Paste CSV here…"></textarea>
-      <div style="margin-top:8px">
-        <button class="btn secondary" onclick="parsePasted()">Parse pasted CSV</button>
-      </div>
+      <div style="margin-top:8px"><button class="btn secondary" onclick="parsePasted()">Parse pasted CSV</button></div>
     </details>
   </div>
 
@@ -175,23 +193,51 @@
     <!-- Step 3: Column manager -->
     <div class="panel">
       <p class="panel-title">3 · Choose columns</p>
-      <p style="color:var(--muted);margin:0 0 10px;font-size:0.875rem">Click to show or hide. The first visible column will be bolded as the primary field.</p>
+      <p style="color:var(--muted);margin:0 0 12px;font-size:0.875rem">
+        Click a column name to show/hide it. Click <strong>📱</strong> to hide that column on mobile only.
+        The first visible column will be bolded as the primary field.
+      </p>
       <div class="col-list" id="col-list"></div>
     </div>
 
-    <!-- Step 4: Exclude rows -->
+    <!-- Step 4: Preview + Exclude rows -->
     <div class="panel">
-      <p class="panel-title">4 · Exclude rows</p>
-      <div class="status-bar">
-        <p style="margin:0;color:var(--muted);font-size:0.875rem">Click any row to exclude it from the output. Click again to restore.</p>
+      <p class="panel-title">4 · Preview &amp; exclude rows</p>
+      <div class="preview-bar">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="preview-tabs">
+            <button class="preview-tab active" id="tab-desktop" onclick="setPreviewMode('desktop')">🖥 Desktop</button>
+            <button class="preview-tab" id="tab-mobile" onclick="setPreviewMode('mobile')">📱 Mobile</button>
+          </div>
+          <small style="color:var(--muted)">Click any row to exclude it from the output</small>
+        </div>
         <span class="excl-pill" id="excl-pill" hidden>0 excluded</span>
       </div>
-      <div class="row-table-wrap">
-        <table class="row-table">
-          <thead id="row-thead"></thead>
-          <tbody id="row-tbody"></tbody>
-        </table>
+
+      <!-- Desktop view -->
+      <div id="desktop-view">
+        <div class="row-table-wrap">
+          <table class="row-table">
+            <thead id="row-thead"></thead>
+            <tbody id="row-tbody"></tbody>
+          </table>
+        </div>
       </div>
+
+      <!-- Mobile simulation view -->
+      <div id="mobile-view" hidden>
+        <div class="mobile-sim">
+          <div class="mobile-sim-inner">
+            <table class="row-table" id="mob-table">
+              <thead id="mob-thead"></thead>
+              <tbody id="mob-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="hint" style="text-align:center">Simulated at 390px — showing only mobile-visible columns</p>
+      </div>
+
+      <div class="preview-pag" id="preview-pag"></div>
       <p class="hint" id="row-summary"></p>
     </div>
 
@@ -215,24 +261,27 @@
 /* ────────────────────────────────────────────────
    STATE
 ──────────────────────────────────────────────── */
-let allRows = [];   // array of arrays (raw data, no header)
-let allCols = [];   // [{idx, label, visible}]
-const excluded = new Set(); // indices into allRows
+let allRows = [];
+// [{idx, label, visible, mobileVisible}]
+let allCols = [];
+const excluded = new Set();
+let previewMode = 'desktop';
+let previewPage = 1;
+const PREVIEW_PZ = 20;
 
 /* ────────────────────────────────────────────────
-   CSV PARSER — handles quotes, \r\n, tab/semicolon
+   CSV PARSER
 ──────────────────────────────────────────────── */
 function parseCSV(text) {
   text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-  const firstLine = text.split('\n')[0];
-  const tabs = (firstLine.match(/\t/g) || []).length;
-  const semis = (firstLine.match(/;/g) || []).length;
-  const commas = (firstLine.match(/,/g) || []).length;
+  const first = text.split('\n')[0];
+  const tabs  = (first.match(/\t/g) || []).length;
+  const semis = (first.match(/;/g)  || []).length;
+  const commas= (first.match(/,/g)  || []).length;
   const delim = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
 
   const rows = [];
   let row = [], field = '', inQ = false;
-
   for (let i = 0; i <= text.length; i++) {
     const ch = i < text.length ? text[i] : '\n';
     if (ch === '"') {
@@ -255,138 +304,214 @@ function parseCSV(text) {
    LOAD DATA
 ──────────────────────────────────────────────── */
 function loadData(lines) {
-  if (lines.length < 2) { alert('CSV must have at least a header row and one data row.'); return; }
-
-  const headers = lines[0];
+  if (lines.length < 2) { alert('CSV must have a header row and at least one data row.'); return; }
   allRows = lines.slice(1);
-  allCols = headers.map((h, i) => ({ idx: i, label: h || `Column ${i + 1}`, visible: true }));
+  allCols = lines[0].map((h, i) => ({
+    idx: i, label: h || `Column ${i + 1}`, visible: true, mobileVisible: true
+  }));
   excluded.clear();
+  previewPage = 1;
 
   document.getElementById('config-sections').hidden = false;
   document.getElementById('drop-label').innerHTML =
-    '<strong>✓ ' + allRows.length + ' rows loaded</strong> · ' + allCols.length + ' columns · <span style="color:var(--accent)">drop another file to replace</span>';
+    '<strong>✓ ' + allRows.length + ' rows loaded</strong> · ' + allCols.length +
+    ' columns · <span style="color:var(--accent)">drop another file to replace</span>';
 
   renderColList();
-  renderRowTable();
+  renderPreview();
 }
 
 /* ────────────────────────────────────────────────
-   FILE / PASTE INPUT
+   FILE / PASTE
 ──────────────────────────────────────────────── */
 document.getElementById('csv-file').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => loadData(parseCSV(ev.target.result));
-  reader.readAsText(file, 'UTF-8');
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => loadData(parseCSV(ev.target.result));
+  r.readAsText(f, 'UTF-8');
 });
-
 const dz = document.getElementById('drop-zone');
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => loadData(parseCSV(ev.target.result));
-  reader.readAsText(file, 'UTF-8');
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => loadData(parseCSV(ev.target.result));
+  r.readAsText(f, 'UTF-8');
 });
-
 function parsePasted() {
-  const text = document.getElementById('csv-paste').value.trim();
-  if (!text) return;
-  loadData(parseCSV(text));
+  const t = document.getElementById('csv-paste').value.trim();
+  if (t) loadData(parseCSV(t));
 }
 
 /* ────────────────────────────────────────────────
-   COLUMN CHIPS
+   COLUMN CHIPS  (label + 📱 mobile toggle)
 ──────────────────────────────────────────────── */
 function renderColList() {
   const list = document.getElementById('col-list');
   list.innerHTML = '';
   allCols.forEach((col, i) => {
-    const chip = document.createElement('label');
-    chip.className = 'col-chip ' + (col.visible ? 'on' : 'off');
-    chip.innerHTML = `<input type="checkbox" ${col.visible ? 'checked' : ''} />${esc(col.label)}`;
-    chip.querySelector('input').addEventListener('change', e => {
-      allCols[i].visible = e.target.checked;
-      chip.className = 'col-chip ' + (col.visible ? 'on' : 'off');
-      renderRowTable();
+    const group = document.createElement('div');
+    group.className = 'col-chip-group ' + (col.visible ? 'col-on' : 'col-off');
+
+    // Label — toggles desktop visibility
+    const label = document.createElement('span');
+    label.className = 'col-chip-label';
+    label.textContent = col.label;
+    label.title = col.visible ? 'Click to hide column' : 'Click to show column';
+    label.addEventListener('click', () => {
+      allCols[i].visible = !allCols[i].visible;
+      previewPage = 1;
+      renderColList();
+      renderPreview();
     });
-    list.appendChild(chip);
+
+    // 📱 button — toggles mobile visibility
+    const mobBtn = document.createElement('button');
+    mobBtn.className = 'col-mob-btn ' + (col.mobileVisible ? 'mob-on' : 'mob-off');
+    mobBtn.textContent = '📱';
+    mobBtn.disabled = !col.visible;
+    mobBtn.title = col.mobileVisible ? 'Visible on mobile — click to hide on mobile' : 'Hidden on mobile — click to show on mobile';
+    mobBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!allCols[i].visible) return;
+      allCols[i].mobileVisible = !allCols[i].mobileVisible;
+      renderColList();
+      renderPreview();
+    });
+
+    group.appendChild(label);
+    group.appendChild(mobBtn);
+    list.appendChild(group);
   });
 }
 
 /* ────────────────────────────────────────────────
-   ROW PREVIEW TABLE
+   PREVIEW MODE TOGGLE
 ──────────────────────────────────────────────── */
-function renderRowTable() {
-  const visCols = allCols.filter(c => c.visible);
+function setPreviewMode(mode) {
+  previewMode = mode;
+  previewPage = 1;
+  document.getElementById('tab-desktop').classList.toggle('active', mode === 'desktop');
+  document.getElementById('tab-mobile').classList.toggle('active', mode === 'mobile');
+  document.getElementById('desktop-view').hidden = mode !== 'desktop';
+  document.getElementById('mobile-view').hidden  = mode !== 'mobile';
+  renderPreview();
+}
 
-  // Header
-  const thead = document.getElementById('row-thead');
+/* ────────────────────────────────────────────────
+   PREVIEW TABLE RENDERER
+──────────────────────────────────────────────── */
+function renderPreview() {
+  const isMob = previewMode === 'mobile';
+  const visCols = allCols.filter(c => isMob ? (c.visible && c.mobileVisible) : c.visible);
+
+  const totalPages = Math.ceil(allRows.length / PREVIEW_PZ) || 1;
+  if (previewPage > totalPages) previewPage = 1;
+  const start = (previewPage - 1) * PREVIEW_PZ;
+  const pageRows = allRows.slice(start, start + PREVIEW_PZ);
+
+  const theadId = isMob ? 'mob-thead' : 'row-thead';
+  const tbodyId = isMob ? 'mob-tbody' : 'row-tbody';
+
+  // ── Header ──
+  const thead = document.getElementById(theadId);
   thead.innerHTML = '';
-  const tr = document.createElement('tr');
-  const thNum = document.createElement('th');
-  thNum.textContent = '#'; thNum.className = 'row-num';
-  tr.appendChild(thNum);
+  const htr = document.createElement('tr');
+  if (!isMob) {
+    const thN = document.createElement('th');
+    thN.className = 'row-num'; thN.textContent = '#';
+    htr.appendChild(thN);
+  }
   visCols.forEach(col => {
     const th = document.createElement('th');
     th.textContent = col.label;
-    tr.appendChild(th);
+    htr.appendChild(th);
   });
-  thead.appendChild(tr);
+  thead.appendChild(htr);
 
-  // Body
-  const tbody = document.getElementById('row-tbody');
+  // ── Body ──
+  const tbody = document.getElementById(tbodyId);
   tbody.innerHTML = '';
-  allRows.forEach((row, i) => {
+  pageRows.forEach((row, pageIdx) => {
+    const actualIdx = start + pageIdx;
     const tr = document.createElement('tr');
-    if (excluded.has(i)) tr.classList.add('excluded');
+    if (excluded.has(actualIdx)) tr.classList.add('excluded');
 
-    const tdN = document.createElement('td');
-    tdN.className = 'row-num'; tdN.textContent = i + 1;
-    tr.appendChild(tdN);
-
+    if (!isMob) {
+      const tdN = document.createElement('td');
+      tdN.className = 'row-num'; tdN.textContent = actualIdx + 1;
+      tr.appendChild(tdN);
+    }
     visCols.forEach(col => {
       const td = document.createElement('td');
       td.textContent = row[col.idx] || '';
       tr.appendChild(td);
     });
-
     tr.addEventListener('click', () => {
-      if (excluded.has(i)) excluded.delete(i);
-      else excluded.add(i);
+      if (excluded.has(actualIdx)) excluded.delete(actualIdx);
+      else excluded.add(actualIdx);
       tr.classList.toggle('excluded');
       updateExclPill();
     });
-
     tbody.appendChild(tr);
   });
 
   updateExclPill();
+  renderPreviewPagination(allRows.length, totalPages);
+}
+
+/* ────────────────────────────────────────────────
+   PREVIEW PAGINATION
+──────────────────────────────────────────────── */
+function renderPreviewPagination(total, totalPages) {
+  const pag = document.getElementById('preview-pag');
+  pag.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  function btn(label, page, disabled, active) {
+    const b = document.createElement('button');
+    b.className = 'ppg-btn' + (active ? ' active' : '');
+    b.textContent = label; b.disabled = disabled;
+    if (!disabled && !active) b.addEventListener('click', () => { previewPage = page; renderPreview(); });
+    return b;
+  }
+
+  pag.appendChild(btn('←', previewPage - 1, previewPage === 1, false));
+  const pages = [];
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || (p >= previewPage - 1 && p <= previewPage + 1)) pages.push(p);
+    else if (pages[pages.length - 1] !== '…') pages.push('…');
+  }
+  pages.forEach(p => {
+    if (p === '…') {
+      const s = document.createElement('span');
+      s.className = 'ppg-ellipsis'; s.textContent = '…';
+      pag.appendChild(s);
+    } else {
+      pag.appendChild(btn(p, p, false, p === previewPage));
+    }
+  });
+  pag.appendChild(btn('→', previewPage + 1, previewPage === totalPages, false));
 }
 
 function updateExclPill() {
   const pill = document.getElementById('excl-pill');
   const n = excluded.size;
-  if (n > 0) {
-    pill.hidden = false;
-    pill.textContent = n + ' excluded';
-  } else {
-    pill.hidden = true;
-  }
-  const summary = document.getElementById('row-summary');
-  const vis = allRows.length - excluded.size;
-  summary.textContent = vis + ' of ' + allRows.length + ' rows will be included in the output.';
+  pill.hidden = n === 0;
+  if (n > 0) pill.textContent = n + ' excluded';
+  const incl = allRows.length - excluded.size;
+  document.getElementById('row-summary').textContent =
+    incl + ' of ' + allRows.length + ' rows will be included in the output.';
 }
 
 /* ────────────────────────────────────────────────
    HTML ESCAPE
 ──────────────────────────────────────────────── */
 function esc(str) {
-  return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(str || '').replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 /* ────────────────────────────────────────────────
@@ -396,30 +521,36 @@ function generateOutput() {
   const visCols = allCols.filter(c => c.visible);
   if (!visCols.length) { alert('Select at least one column.'); return; }
 
+  // Indices (within visCols) of columns hidden on mobile
+  const mobHidden = visCols.map((c, i) => c.mobileVisible ? null : i).filter(i => i !== null);
+
   const rows = allRows
     .filter((_, i) => !excluded.has(i))
     .map(r => visCols.map(c => (r[c.idx] || '').trim()));
 
-  if (!rows.length) { alert('No rows remaining after exclusions.'); return; }
+  if (!rows.length) { alert('No rows remain after exclusions.'); return; }
 
   const title    = document.getElementById('tbl-title').value.trim();
   const subtitle = document.getElementById('tbl-subtitle').value.trim();
   const source   = document.getElementById('tbl-source').value.trim();
   const pageSize = parseInt(document.getElementById('tbl-pagesize').value) || 20;
   const headers  = visCols.map(c => c.label);
+  const uid      = 'nt' + Math.random().toString(36).slice(2, 8);
 
-  // Unique prefix so multiple embeds on one page don't clash
-  const uid = 'nt' + Math.random().toString(36).slice(2, 8);
+  const out = buildCSS(uid, mobHidden)
+    + '\n\n' + buildMarkup(uid, title, subtitle, source, headers)
+    + '\n\n' + buildScript(uid, rows, pageSize);
 
-  const css = buildCSS(uid);
-  const markup = buildMarkup(uid, title, subtitle, source, headers);
-  const script = buildScript(uid, rows, headers, pageSize, source);
-
-  document.getElementById('output-code').value = css + '\n\n' + markup + '\n\n' + script;
+  document.getElementById('output-code').value = out;
 }
 
 /* ── CSS block ── */
-function buildCSS(u) {
+function buildCSS(u, mobHidden) {
+  let mobileHideRule = '';
+  if (mobHidden.length) {
+    const sels = mobHidden.map(i => `.${u}-c${i}`).join(',');
+    mobileHideRule = `@media(max-width:768px){${sels}{display:none;}}`;
+  }
   return `<style>
 .${u}{font-family:var(--font-body,Georgia,serif);max-width:100%;color:var(--color-darkgrey,#15171a);grid-column:full-start/full-end;padding-left:50px;padding-right:50px;}
 @media(max-width:768px){.${u}{padding-left:0;padding-right:0;}}
@@ -450,13 +581,14 @@ function buildCSS(u) {
 .${u}-pb:disabled{opacity:.35;cursor:default;}
 .${u}-el{font-family:var(--font-mono,monospace);color:var(--color-midgrey,#738a94);padding:0 4px;}
 .${u}-ft{font-family:var(--font-caption,serif);color:var(--color-midgrey,#738a94);margin-top:10px;padding:8px 0 4px;border-top:1px solid rgba(12,24,32,.08);}
+${mobileHideRule}
 </style>`;
 }
 
 /* ── HTML markup block ── */
 function buildMarkup(u, title, subtitle, source, headers) {
-  const headerRow = headers.map(h =>
-    `<th class="${u}-th">${esc(h)}</th>`
+  const headerRow = headers.map((h, i) =>
+    `<th class="${u}-th ${u}-c${i}">${esc(h)}</th>`
   ).join('');
 
   return `<div class="${u}">
@@ -480,21 +612,17 @@ function buildMarkup(u, title, subtitle, source, headers) {
 </div>`;
 }
 
-/* ── Self-contained JS block ── */
-function buildScript(u, rows, headers, pageSize, source) {
-  const rowsJSON = JSON.stringify(rows);
-  const hdrsJSON = JSON.stringify(headers);
-
+/* ── Self-contained JS block (column classes on TD, pagination included) ── */
+function buildScript(u, rows, pageSize) {
   return `<script>
 (function(){
-var U='${u}',ROWS=${rowsJSON},HDRS=${hdrsJSON},PZ=${pageSize},PAGE=1,SC=-1,SD=1;
+var U='${u}',ROWS=${JSON.stringify(rows)},PZ=${pageSize},PAGE=1,SC=-1,SD=1;
 function filt(){
   var q=document.getElementById(U+'-search').value.toLowerCase().trim();
   var r=ROWS.slice();
   if(q)r=r.filter(function(x){return x.join(' ').toLowerCase().indexOf(q)>=0;});
   if(SC>=0)r.sort(function(a,b){
-    var av=a[SC],bv=b[SC];
-    var an=parseFloat(av),bn=parseFloat(bv);
+    var av=a[SC],bv=b[SC],an=parseFloat(av),bn=parseFloat(bv);
     if(!isNaN(an)&&!isNaN(bn)){av=an;bv=bn;}else{av=av.toLowerCase();bv=bv.toLowerCase();}
     return av<bv?-SD:av>bv?SD:0;
   });
@@ -515,7 +643,7 @@ function render(){
     r.forEach(function(c,ci){
       var td=document.createElement('td');
       td.textContent=c;
-      if(ci===0)td.className=U+'-name';
+      td.className=U+'-c'+ci+(ci===0?' '+U+'-name':'');
       tr.appendChild(td);
     });
     tb.appendChild(tr);
@@ -560,7 +688,7 @@ render();
 }
 
 /* ────────────────────────────────────────────────
-   COPY OUTPUT
+   COPY
 ──────────────────────────────────────────────── */
 function copyOutput() {
   const txt = document.getElementById('output-code').value;
