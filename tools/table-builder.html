@@ -7,132 +7,115 @@
   <link rel="stylesheet" href="../assets/site.css" />
   <style>
     /* ── Drop zone ── */
-    .drop-zone {
-      display: block; border: 2px dashed var(--border); border-radius: 12px;
-      padding: 36px 24px; text-align: center; cursor: pointer;
-      transition: border-color .15s, background .15s; color: var(--muted);
-    }
-    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: #eef5ff; }
-    .drop-zone input[type="file"] { display: none; }
-    .drop-zone strong { color: var(--text); }
+    .drop-zone { display:block; border:2px dashed var(--border); border-radius:12px; padding:36px 24px; text-align:center; cursor:pointer; transition:border-color .15s,background .15s; color:var(--muted); }
+    .drop-zone:hover,.drop-zone.drag-over { border-color:var(--accent); background:#eef5ff; }
+    .drop-zone input[type="file"] { display:none; }
+    .drop-zone strong { color:var(--text); }
 
     /* ── Panels ── */
-    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-top: 16px; }
-    .panel-title { font-size: 1rem; font-weight: 700; margin: 0 0 6px; color: var(--text); display: flex; align-items: center; gap: 8px; }
-    .panel-desc { font-size: 0.875rem; color: var(--muted); margin: 0 0 14px; }
-    .opt-tag { font-size: 0.7rem; font-weight: 600; background: #eef5ff; color: var(--accent); padding: 2px 8px; border-radius: 20px; letter-spacing: .04em; text-transform: uppercase; }
+    .panel { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-top:16px; }
+    .panel-title { font-size:1rem; font-weight:700; margin:0 0 6px; color:var(--text); display:flex; align-items:center; gap:8px; }
+    .panel-desc { font-size:0.875rem; color:var(--muted); margin:0 0 14px; }
+    .opt-tag { font-size:0.7rem; font-weight:600; background:#eef5ff; color:var(--accent); padding:2px 8px; border-radius:20px; letter-spacing:.04em; text-transform:uppercase; }
+    .divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
 
-    /* ── Column chips (label + 📱 toggle) ── */
-    .col-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .col-chip-group { display: inline-flex; align-items: stretch; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: border-color .1s; }
-    .col-chip-group.col-on  { border-color: var(--accent); }
-    .col-chip-group.col-off { opacity: .45; }
-    .col-chip-label { padding: 5px 10px 5px 13px; cursor: pointer; user-select: none; font-size: 0.85rem; transition: background .1s, color .1s; }
-    .col-chip-group.col-on .col-chip-label { background: #eef5ff; color: var(--accent); font-weight: 600; }
-    .col-mob-btn { padding: 5px 9px; border: none; border-left: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 0.82rem; line-height: 1; transition: background .1s; display: flex; align-items: center; }
-    .col-mob-btn:hover:not(:disabled) { background: #f0f4f8; }
-    .col-mob-btn.mob-on  { color: var(--accent); }
-    .col-mob-btn.mob-off { filter: grayscale(1); opacity: .45; }
-    .col-mob-btn:disabled { cursor: default; opacity: .2; }
+    /* ── Column chips ── */
+    .col-list { display:flex; flex-wrap:wrap; gap:8px; }
+    .col-chip-group { display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:20px; overflow:hidden; transition:border-color .1s; }
+    .col-chip-group.col-on { border-color:var(--accent); }
+    .col-chip-group.col-off { opacity:.45; }
+    .col-chip-label { padding:5px 10px 5px 13px; cursor:pointer; user-select:none; font-size:0.85rem; transition:background .1s,color .1s; }
+    .col-chip-group.col-on .col-chip-label { background:#eef5ff; color:var(--accent); font-weight:600; }
+    .col-mob-btn { padding:5px 9px; border:none; border-left:1px solid var(--border); background:transparent; cursor:pointer; font-size:0.82rem; line-height:1; transition:background .1s; display:flex; align-items:center; }
+    .col-mob-btn:hover:not(:disabled) { background:#f0f4f8; }
+    .col-mob-btn.mob-on { color:var(--accent); }
+    .col-mob-btn.mob-off { filter:grayscale(1); opacity:.45; }
+    .col-mob-btn:disabled { cursor:default; opacity:.2; }
 
-    /* ── Column styles step ── */
-    .style-rows { display: grid; gap: 10px; }
-    .style-row {
-      border: 1px solid var(--border); border-radius: 10px;
-      overflow: hidden; background: var(--bg);
-    }
-    .style-row-head {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; background: var(--panel);
-      flex-wrap: wrap;
-    }
-    .style-col-name { font-weight: 700; font-size: 0.9rem; flex: 1; min-width: 80px; }
-    .style-select {
-      padding: 5px 10px; border: 1px solid var(--border); border-radius: 8px;
-      background: #fff; font-size: 0.85rem; color: var(--text); cursor: pointer;
-    }
-    .style-preview-inline {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    }
-    .style-preview-sample {
-      display: inline-block; padding: 2px 10px;
-      font-size: 0.78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-      border-radius: 3px;
-    }
-    /* Badge configurator */
-    .badge-config { padding: 12px 14px; border-top: 1px solid var(--border); display: grid; gap: 8px; }
-    .badge-val-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .badge-val-name { font-size: 0.85rem; min-width: 100px; flex-shrink: 0; }
-    .badge-val-preview {
-      display: inline-block; padding: 2px 10px; border-radius: 3px;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-      flex-shrink: 0;
-    }
-    .badge-swatches { display: flex; gap: 5px; flex-wrap: wrap; }
-    .swatch {
-      width: 22px; height: 22px; border-radius: 50%;
-      border: 2.5px solid transparent; cursor: pointer;
-      transition: border-color .1s, transform .1s;
-    }
-    .swatch:hover { transform: scale(1.15); }
-    .swatch.picked { border-color: var(--text) !important; }
-    /* Non-badge style previews */
-    .style-example {
-      padding: 8px 14px; border-top: 1px solid var(--border);
-      font-size: 0.85rem; color: var(--muted);
-    }
-    .ex-bold   { font-weight: 700; color: var(--text); }
-    .ex-muted  { color: var(--muted); }
-    .ex-mono   { font-family: ui-monospace, monospace; color: var(--text); }
-    .ex-number { font-family: ui-monospace, monospace; color: var(--text); text-align: right; display: block; }
+    /* ── Interactive controls settings ── */
+    .ctrl-grid { display:grid; gap:10px; }
+    .ctrl-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); }
+    .ctrl-row-label { font-weight:600; font-size:0.875rem; min-width:90px; flex-shrink:0; }
+    .ctrl-check-group { display:flex; gap:10px; flex-wrap:wrap; }
+    .ctrl-check { display:inline-flex; align-items:center; gap:5px; font-size:0.85rem; cursor:pointer; }
+    .ctrl-check input { cursor:pointer; }
+    .ctrl-sep { width:1px; background:var(--border); align-self:stretch; margin:0 2px; }
+    .ctrl-disabled { opacity:.4; pointer-events:none; }
+
+    /* ── Column styles ── */
+    .style-rows { display:grid; gap:10px; }
+    .style-row { border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--bg); }
+    .style-row-head { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--panel); flex-wrap:wrap; }
+    .style-col-name { font-weight:700; font-size:0.9rem; flex:1; min-width:80px; }
+    .style-select { padding:5px 10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-size:0.85rem; color:var(--text); cursor:pointer; }
+    .style-preview-inline { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .badge-config { padding:12px 14px; border-top:1px solid var(--border); display:grid; gap:8px; }
+    .badge-val-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .badge-val-name { font-size:0.85rem; min-width:100px; flex-shrink:0; }
+    .badge-val-preview { display:inline-block; padding:2px 10px; border-radius:3px; font-size:0.75rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; flex-shrink:0; }
+    .badge-swatches { display:flex; gap:5px; flex-wrap:wrap; }
+    .swatch { width:22px; height:22px; border-radius:50%; border:2.5px solid transparent; cursor:pointer; transition:border-color .1s,transform .1s; }
+    .swatch:hover { transform:scale(1.15); }
+    .swatch.picked { border-color:var(--text) !important; }
+    .ex-bold { font-weight:700; color:var(--text); }
+    .ex-muted { color:var(--muted); }
+    .ex-mono { font-family:ui-monospace,monospace; color:var(--text); }
+    .ex-number { font-family:ui-monospace,monospace; color:var(--text); }
 
     /* ── Preview tabs ── */
-    .preview-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
-    .preview-tabs { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .preview-tab { padding: 6px 18px; background: transparent; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--muted); transition: background .1s, color .1s; }
-    .preview-tab + .preview-tab { border-left: 1px solid var(--border); }
-    .preview-tab.active { background: var(--accent); color: #fff; }
+    .preview-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+    .preview-tabs { display:inline-flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .preview-tab { padding:6px 18px; background:transparent; border:none; cursor:pointer; font-size:0.85rem; font-weight:600; color:var(--muted); transition:background .1s,color .1s; }
+    .preview-tab+.preview-tab { border-left:1px solid var(--border); }
+    .preview-tab.active { background:var(--accent); color:#fff; }
+    .excl-pill { display:inline-block; padding:3px 10px; border-radius:20px; background:#ffe4e4; color:#b91c1c; font-size:0.8rem; font-weight:700; }
 
-    /* ── Exclusion pill ── */
-    .excl-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; background: #ffe4e4; color: #b91c1c; font-size: 0.8rem; font-weight: 700; }
+    /* ── Preview controls bar ── */
+    .preview-ctrl-bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; min-height:0; }
+    .preview-ctrl-bar input[type="text"] { flex:1; min-width:150px; padding:7px 11px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; outline:none; background:#fff; }
+    .preview-ctrl-bar input[type="text"]:focus { border-color:var(--accent); }
+    .preview-ctrl-bar select { padding:7px 11px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:#fff; cursor:pointer; outline:none; }
+    .preview-ctrl-bar select:focus { border-color:var(--accent); }
+    .preview-ctrl-note { font-size:0.75rem; color:var(--muted); font-style:italic; }
 
-    /* ── Mobile simulation frame ── */
-    .mobile-sim { max-width: 390px; border: 8px solid #1a1a1a; border-radius: 28px; overflow: hidden; margin: 0 auto; box-shadow: 0 12px 40px rgba(0,0,0,.2); }
-    .mobile-sim-inner { overflow-x: auto; background: #fff; }
+    /* ── Mobile sim ── */
+    .mobile-sim { max-width:390px; border:8px solid #1a1a1a; border-radius:28px; overflow:hidden; margin:0 auto; box-shadow:0 12px 40px rgba(0,0,0,.2); }
+    .mobile-sim-inner { overflow-x:auto; background:#fff; }
+    .mobile-ctrl-bar { padding:8px 10px; background:#fff; border-bottom:1px solid #eee; display:flex; gap:6px; flex-wrap:wrap; }
+    .mobile-ctrl-bar input,.mobile-ctrl-bar select { width:100%; box-sizing:border-box; padding:6px 10px; border:1px solid #ddd; border-radius:5px; font-size:0.82rem; margin-bottom:2px; outline:none; }
 
     /* ── Row preview table ── */
-    .row-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-    table.row-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
-    .row-table thead th { position: sticky; top: 0; z-index: 1; background: var(--accent); color: #fff; padding: 8px 10px; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
-    .row-table tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
-    .row-table tbody tr:nth-child(even) { background: #f7f9fb; }
-    .row-table tbody tr:hover { background: #ddeeff; }
-    .row-table tbody tr.excluded { background: #fff5f5 !important; }
-    .row-table tbody tr.excluded td { opacity: .4; text-decoration: line-through; }
-    .row-table td { padding: 7px 10px; }
-    .row-num { color: var(--muted); font-size: 0.72rem; width: 28px; text-align: center; }
+    .row-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:8px; }
+    table.row-table { width:100%; border-collapse:collapse; font-size:0.83rem; }
+    .row-table thead th { position:sticky; top:0; z-index:1; background:var(--accent); color:#fff; padding:8px 10px; text-align:left; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+    .row-table tbody tr { border-bottom:1px solid var(--border); cursor:pointer; transition:background .1s; }
+    .row-table tbody tr:nth-child(even) { background:#f7f9fb; }
+    .row-table tbody tr:hover { background:#ddeeff; }
+    .row-table tbody tr.excluded { background:#fff5f5 !important; }
+    .row-table tbody tr.excluded td { opacity:.4; text-decoration:line-through; }
+    .row-table td { padding:7px 10px; }
+    .row-num { color:var(--muted); font-size:0.72rem; width:28px; text-align:center; }
 
     /* ── Preview pagination ── */
-    .preview-pag { display: flex; align-items: center; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
-    .ppg-btn { min-width: 30px; height: 30px; padding: 0 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; color: var(--text); transition: background .1s, border-color .1s; }
-    .ppg-btn:hover:not(:disabled) { background: #eef5ff; border-color: var(--accent); }
-    .ppg-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; cursor: default; }
-    .ppg-btn:disabled { opacity: .35; cursor: default; }
-    .ppg-ellipsis { color: var(--muted); padding: 0 2px; font-size: 0.8rem; }
+    .preview-pag { display:flex; align-items:center; gap:4px; margin-top:10px; flex-wrap:wrap; }
+    .ppg-btn { min-width:30px; height:30px; padding:0 8px; border:1px solid var(--border); border-radius:6px; background:var(--panel); cursor:pointer; font-size:0.8rem; display:inline-flex; align-items:center; justify-content:center; color:var(--text); transition:background .1s,border-color .1s; }
+    .ppg-btn:hover:not(:disabled) { background:#eef5ff; border-color:var(--accent); }
+    .ppg-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; cursor:default; }
+    .ppg-btn:disabled { opacity:.35; cursor:default; }
+    .ppg-ellipsis { color:var(--muted); padding:0 2px; font-size:0.8rem; }
 
-    .hint { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
-    #output-code { min-height: 140px; font-family: ui-monospace, monospace; font-size: 0.75rem; resize: vertical; }
-    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    @media (max-width: 600px) { .row.two { grid-template-columns: 1fr; } }
+    .hint { font-size:0.8rem; color:var(--muted); margin:8px 0 0; }
+    #output-code { min-height:140px; font-family:ui-monospace,monospace; font-size:0.75rem; resize:vertical; }
+    .action-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    @media(max-width:600px) { .row.two { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
 <div class="container">
   <nav class="top-nav"><a href="../index.html" class="btn secondary">← Back to tools</a></nav>
-
   <header>
     <h1>Table Builder</h1>
-    <p class="lede">Upload a CSV, style columns, preview on desktop and mobile, exclude rows, then copy the embed code for Ghost.</p>
+    <p class="lede">Upload a CSV, style columns, configure controls, preview on desktop and mobile, exclude rows, then copy the embed code for Ghost.</p>
   </header>
 
   <!-- 1 · Upload -->
@@ -154,7 +137,7 @@
 
   <div id="config-sections" hidden>
 
-    <!-- 2 · Table settings -->
+    <!-- 2 · Table settings + interactive controls -->
     <div class="panel">
       <p class="panel-title">2 · Table settings</p>
       <div class="tool-form">
@@ -165,6 +148,33 @@
           <div>
             <label for="tbl-pagesize">Rows per page</label>
             <select id="tbl-pagesize"><option value="10">10</option><option value="15">15</option><option value="20" selected>20</option><option value="25">25</option><option value="50">50</option></select>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <p style="font-weight:700;font-size:.9rem;margin:0 0 10px">Interactive controls</p>
+      <p class="panel-desc" style="margin-bottom:12px">Choose which controls appear in the embed — separately for desktop and mobile.</p>
+      <div class="ctrl-grid">
+        <!-- Search -->
+        <div class="ctrl-row">
+          <span class="ctrl-row-label">🔍 Search</span>
+          <div class="ctrl-sep"></div>
+          <div class="ctrl-check-group">
+            <label class="ctrl-check"><input type="checkbox" id="ctrl-s-desk" checked onchange="renderPreview()"> Desktop</label>
+            <label class="ctrl-check"><input type="checkbox" id="ctrl-s-mob" checked onchange="renderPreview()"> Mobile</label>
+          </div>
+        </div>
+        <!-- Filter -->
+        <div class="ctrl-row">
+          <span class="ctrl-row-label">▾ Filter by</span>
+          <div class="ctrl-sep"></div>
+          <select id="ctrl-f-col" class="style-select" onchange="onFilterColChange()">
+            <option value="">None</option>
+          </select>
+          <div class="ctrl-check-group" id="ctrl-f-checks" style="opacity:.35;pointer-events:none">
+            <label class="ctrl-check"><input type="checkbox" id="ctrl-f-desk" checked onchange="renderPreview()"> Desktop</label>
+            <label class="ctrl-check"><input type="checkbox" id="ctrl-f-mob" checked onchange="renderPreview()"> Mobile</label>
           </div>
         </div>
       </div>
@@ -180,7 +190,7 @@
     <!-- 4 · Column styles -->
     <div class="panel">
       <p class="panel-title">4 · Column styles <span class="opt-tag">optional</span></p>
-      <p class="panel-desc">Apply special formatting to specific columns — like coloured badges for categories, bold for key fields, or monospace for numbers and codes.</p>
+      <p class="panel-desc">Apply special formatting — colour badges for categories, bold for key fields, monospace for codes and numbers.</p>
       <div class="style-rows" id="col-style-list"></div>
     </div>
 
@@ -197,13 +207,26 @@
         </div>
         <span class="excl-pill" id="excl-pill" hidden>0 excluded</span>
       </div>
+
+      <!-- Desktop view -->
       <div id="desktop-view">
-        <div class="row-table-wrap"><table class="row-table"><thead id="row-thead"></thead><tbody id="row-tbody"></tbody></table></div>
+        <div class="preview-ctrl-bar" id="desk-ctrl-bar"></div>
+        <div class="row-table-wrap">
+          <table class="row-table"><thead id="row-thead"></thead><tbody id="row-tbody"></tbody></table>
+        </div>
       </div>
+
+      <!-- Mobile sim view -->
       <div id="mobile-view" hidden>
-        <div class="mobile-sim"><div class="mobile-sim-inner"><table class="row-table"><thead id="mob-thead"></thead><tbody id="mob-tbody"></tbody></table></div></div>
-        <p class="hint" style="text-align:center">Simulated at 390px — mobile-only hidden columns are not shown</p>
+        <div class="mobile-sim">
+          <div class="mobile-ctrl-bar" id="mob-ctrl-bar"></div>
+          <div class="mobile-sim-inner">
+            <table class="row-table"><thead id="mob-thead"></thead><tbody id="mob-tbody"></tbody></table>
+          </div>
+        </div>
+        <p class="hint" style="text-align:center">Simulated at 390px — mobile-hidden columns and controls not shown</p>
       </div>
+
       <div class="preview-pag" id="preview-pag"></div>
       <p class="hint" id="row-summary"></p>
     </div>
@@ -221,456 +244,516 @@
       </div>
     </div>
 
-  </div><!-- /config-sections -->
+  </div>
 </div>
 
 <script>
-/* ─────────────────────────────────────────────
-   COLOUR PRESETS (for badge style)
-───────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════
+   PRESETS
+═══════════════════════════════════════════════ */
 const PRESETS = [
-  { name: 'Navy',   bg: '#e5eff5', color: '#00243e' },
-  { name: 'Amber',  bg: '#fef3cd', color: '#7a5200' },
-  { name: 'Green',  bg: '#dcfce7', color: '#166534' },
-  { name: 'Red',    bg: '#fee2e2', color: '#991b1b' },
-  { name: 'Purple', bg: '#f3e8ff', color: '#6b21a8' },
-  { name: 'Teal',   bg: '#ccfbf1', color: '#0f766e' },
-  { name: 'Gray',   bg: '#f1f5f9', color: '#334155' },
-  { name: 'Pink',   bg: '#fce7f3', color: '#9d174d' },
+  { name:'Navy',   bg:'#e5eff5', color:'#00243e' },
+  { name:'Amber',  bg:'#fef3cd', color:'#7a5200' },
+  { name:'Green',  bg:'#dcfce7', color:'#166534' },
+  { name:'Red',    bg:'#fee2e2', color:'#991b1b' },
+  { name:'Purple', bg:'#f3e8ff', color:'#6b21a8' },
+  { name:'Teal',   bg:'#ccfbf1', color:'#0f766e' },
+  { name:'Gray',   bg:'#f1f5f9', color:'#334155' },
+  { name:'Pink',   bg:'#fce7f3', color:'#9d174d' },
 ];
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    STATE
-───────────────────────────────────────────── */
+═══════════════════════════════════════════════ */
 let allRows = [];
-let allCols = []; // [{idx, label, visible, mobileVisible}]
+let allCols = [];           // [{idx, label, visible, mobileVisible}]
 const excluded  = new Set();
-// colStyles[colIdx] = {type:'none'|'badge'|'bold'|'muted'|'mono'|'number', badgeMap:{val:presetIdx}}
-const colStyles = {};
+const colStyles = {};       // colStyles[colIdx] = {type, badgeMap}
 let previewMode = 'desktop';
 let previewPage = 1;
+let pvSearch    = '';       // live search value in preview
+let pvFilter    = '';       // live filter value in preview
 const PREVIEW_PZ = 20;
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    CSV PARSER
-───────────────────────────────────────────── */
+═══════════════════════════════════════════════ */
 function parseCSV(text) {
-  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').trim();
   const first = text.split('\n')[0];
-  const tabs  = (first.match(/\t/g) || []).length;
-  const semis = (first.match(/;/g)  || []).length;
-  const commas= (first.match(/,/g)  || []).length;
-  const delim = tabs > commas && tabs > semis ? '\t' : semis > commas ? ';' : ',';
-  const rows = [];
-  let row = [], field = '', inQ = false;
-  for (let i = 0; i <= text.length; i++) {
-    const ch = i < text.length ? text[i] : '\n';
-    if (ch === '"') {
-      if (inQ && text[i + 1] === '"') { field += '"'; i++; } else inQ = !inQ;
-    } else if (ch === delim && !inQ) {
-      row.push(field.trim()); field = '';
-    } else if (ch === '\n' && !inQ) {
-      row.push(field.trim()); field = '';
-      if (row.some(f => f !== '')) rows.push(row);
-      row = [];
-    } else { field += ch; }
+  const tabs  = (first.match(/\t/g)||[]).length;
+  const semis = (first.match(/;/g) ||[]).length;
+  const commas= (first.match(/,/g) ||[]).length;
+  const delim = tabs>commas&&tabs>semis?'\t':semis>commas?';':',';
+  const rows=[]; let row=[],field='',inQ=false;
+  for(let i=0;i<=text.length;i++){
+    const ch=i<text.length?text[i]:'\n';
+    if(ch==='"'){ if(inQ&&text[i+1]==='"'){field+='"';i++;}else inQ=!inQ; }
+    else if(ch===delim&&!inQ){ row.push(field.trim());field=''; }
+    else if(ch==='\n'&&!inQ){ row.push(field.trim());field=''; if(row.some(f=>f!==''))rows.push(row);row=[]; }
+    else field+=ch;
   }
   return rows;
 }
 
-/* ─────────────────────────────────────────────
-   LOAD DATA
-───────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════
+   LOAD
+═══════════════════════════════════════════════ */
 function loadData(lines) {
-  if (lines.length < 2) { alert('CSV must have a header row and at least one data row.'); return; }
+  if(lines.length<2){alert('CSV must have a header row and at least one data row.');return;}
   allRows = lines.slice(1);
-  allCols = lines[0].map((h, i) => ({ idx: i, label: h || `Column ${i + 1}`, visible: true, mobileVisible: true }));
+  allCols = lines[0].map((h,i)=>({idx:i,label:h||`Column ${i+1}`,visible:true,mobileVisible:true}));
   excluded.clear();
-  Object.keys(colStyles).forEach(k => delete colStyles[k]);
-  previewPage = 1;
+  Object.keys(colStyles).forEach(k=>delete colStyles[k]);
+  previewPage=1; pvSearch=''; pvFilter='';
 
-  document.getElementById('config-sections').hidden = false;
-  document.getElementById('drop-label').innerHTML =
-    '<strong>✓ ' + allRows.length + ' rows loaded</strong> · ' + allCols.length +
+  document.getElementById('config-sections').hidden=false;
+  document.getElementById('drop-label').innerHTML=
+    '<strong>✓ '+allRows.length+' rows loaded</strong> · '+allCols.length+
     ' columns · <span style="color:var(--accent)">drop another file to replace</span>';
 
   renderColList();
   renderColStyleList();
+  renderFilterColSelect();
   renderPreview();
 }
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    FILE / PASTE
-───────────────────────────────────────────── */
-document.getElementById('csv-file').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader(); r.onload = ev => loadData(parseCSV(ev.target.result)); r.readAsText(f, 'UTF-8');
+═══════════════════════════════════════════════ */
+document.getElementById('csv-file').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>loadData(parseCSV(ev.target.result));r.readAsText(f,'UTF-8');
 });
-const dz = document.getElementById('drop-zone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('drag-over');
-  const f = e.dataTransfer.files[0]; if (!f) return;
-  const r = new FileReader(); r.onload = ev => loadData(parseCSV(ev.target.result)); r.readAsText(f, 'UTF-8');
+const dz=document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>loadData(parseCSV(ev.target.result));r.readAsText(f,'UTF-8');
 });
-function parsePasted() {
-  const t = document.getElementById('csv-paste').value.trim(); if (t) loadData(parseCSV(t));
-}
+function parsePasted(){const t=document.getElementById('csv-paste').value.trim();if(t)loadData(parseCSV(t));}
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    COLUMN CHIPS
-───────────────────────────────────────────── */
-function renderColList() {
-  const list = document.getElementById('col-list');
-  list.innerHTML = '';
-  allCols.forEach((col, i) => {
-    const group = document.createElement('div');
-    group.className = 'col-chip-group ' + (col.visible ? 'col-on' : 'col-off');
+═══════════════════════════════════════════════ */
+function renderColList(){
+  const list=document.getElementById('col-list');
+  list.innerHTML='';
+  allCols.forEach((col,i)=>{
+    const group=document.createElement('div');
+    group.className='col-chip-group '+(col.visible?'col-on':'col-off');
 
-    const label = document.createElement('span');
-    label.className = 'col-chip-label';
-    label.textContent = col.label;
-    label.title = col.visible ? 'Click to hide' : 'Click to show';
-    label.addEventListener('click', () => {
-      allCols[i].visible = !allCols[i].visible;
-      previewPage = 1;
-      renderColList();
-      renderColStyleList();
-      renderPreview();
+    const label=document.createElement('span');
+    label.className='col-chip-label';
+    label.textContent=col.label;
+    label.title=col.visible?'Click to hide':'Click to show';
+    label.addEventListener('click',()=>{
+      allCols[i].visible=!allCols[i].visible;
+      previewPage=1;
+      renderColList();renderColStyleList();renderFilterColSelect();renderPreview();
     });
 
-    const mobBtn = document.createElement('button');
-    mobBtn.className = 'col-mob-btn ' + (col.mobileVisible ? 'mob-on' : 'mob-off');
-    mobBtn.textContent = '📱';
-    mobBtn.disabled = !col.visible;
-    mobBtn.title = col.mobileVisible ? 'Visible on mobile — click to hide' : 'Hidden on mobile — click to show';
-    mobBtn.addEventListener('click', e => {
+    const mobBtn=document.createElement('button');
+    mobBtn.className='col-mob-btn '+(col.mobileVisible?'mob-on':'mob-off');
+    mobBtn.textContent='📱'; mobBtn.disabled=!col.visible;
+    mobBtn.title=col.mobileVisible?'Visible on mobile — click to hide':'Hidden on mobile — click to show';
+    mobBtn.addEventListener('click',e=>{
       e.stopPropagation();
-      if (!allCols[i].visible) return;
-      allCols[i].mobileVisible = !allCols[i].mobileVisible;
-      renderColList();
-      renderPreview();
+      if(!allCols[i].visible)return;
+      allCols[i].mobileVisible=!allCols[i].mobileVisible;
+      renderColList();renderPreview();
     });
 
-    group.appendChild(label);
-    group.appendChild(mobBtn);
+    group.appendChild(label);group.appendChild(mobBtn);
     list.appendChild(group);
   });
 }
 
-/* ─────────────────────────────────────────────
-   UNIQUE VALUES HELPER
-───────────────────────────────────────────── */
-function getUniqueValues(colIdx) {
-  const vals = new Set();
-  allRows.forEach(r => { const v = (r[colIdx] || '').trim(); if (v) vals.add(v); });
-  return [...vals].sort();
+/* ═══════════════════════════════════════════════
+   FILTER COLUMN SELECT (in step 2)
+═══════════════════════════════════════════════ */
+function renderFilterColSelect(){
+  const sel=document.getElementById('ctrl-f-col');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">None</option>';
+  allCols.filter(c=>c.visible).forEach(col=>{
+    const o=document.createElement('option');
+    o.value=col.idx; o.textContent=col.label;
+    if(String(col.idx)===prev) o.selected=true;
+    sel.appendChild(o);
+  });
+  // if previously selected col is now hidden, reset
+  const stillValid=allCols.find(c=>String(c.idx)===prev&&c.visible);
+  if(!stillValid) sel.value='';
+  onFilterColChange();
 }
 
-/* ─────────────────────────────────────────────
-   COLUMN STYLE PANEL
-───────────────────────────────────────────── */
-function renderColStyleList() {
-  const list = document.getElementById('col-style-list');
-  list.innerHTML = '';
-  const visCols = allCols.filter(c => c.visible);
+function onFilterColChange(){
+  const checks=document.getElementById('ctrl-f-checks');
+  const hasFilter=document.getElementById('ctrl-f-col').value!=='';
+  checks.style.opacity=hasFilter?'1':'0.35';
+  checks.style.pointerEvents=hasFilter?'auto':'none';
+  pvFilter='';
+  renderPreview();
+}
 
-  if (!visCols.length) {
-    list.innerHTML = '<p style="color:var(--muted);font-size:.875rem;margin:0">No visible columns yet — go to step 3 first.</p>';
+/* ═══════════════════════════════════════════════
+   UNIQUE VALUES HELPER
+═══════════════════════════════════════════════ */
+function getUniqueValues(colIdx){
+  const vals=new Set();
+  allRows.forEach(r=>{const v=(r[colIdx]||'').trim();if(v)vals.add(v);});
+  return[...vals].sort();
+}
+
+/* ═══════════════════════════════════════════════
+   COLUMN STYLE PANEL
+═══════════════════════════════════════════════ */
+function renderColStyleList(){
+  const list=document.getElementById('col-style-list');
+  list.innerHTML='';
+  const visCols=allCols.filter(c=>c.visible);
+  if(!visCols.length){
+    list.innerHTML='<p style="color:var(--muted);font-size:.875rem;margin:0">No visible columns yet — configure step 3 first.</p>';
     return;
   }
-
-  visCols.forEach(col => {
-    if (!colStyles[col.idx]) colStyles[col.idx] = { type: 'none', badgeMap: {} };
-    const st = colStyles[col.idx];
-
-    const row = document.createElement('div');
-    row.className = 'style-row';
-
-    /* ── Header row: name + selector ── */
-    const head = document.createElement('div');
-    head.className = 'style-row-head';
-
-    const nameEl = document.createElement('span');
-    nameEl.className = 'style-col-name';
-    nameEl.textContent = col.label;
-
-    const sel = document.createElement('select');
-    sel.className = 'style-select';
-    [
-      ['none',   'No style'],
-      ['badge',  '🏷 Badge — colour pills per value'],
-      ['bold',   'B  Bold'],
-      ['muted',  '···  Muted'],
-      ['mono',   '</>  Monospace'],
-      ['number', '#  Number (right-aligned monospace)'],
-    ].forEach(([val, txt]) => {
-      const o = document.createElement('option');
-      o.value = val; o.textContent = txt; o.selected = st.type === val;
-      sel.appendChild(o);
+  visCols.forEach(col=>{
+    if(!colStyles[col.idx])colStyles[col.idx]={type:'none',badgeMap:{}};
+    const st=colStyles[col.idx];
+    const row=document.createElement('div');row.className='style-row';
+    const head=document.createElement('div');head.className='style-row-head';
+    const nameEl=document.createElement('span');nameEl.className='style-col-name';nameEl.textContent=col.label;
+    const sel=document.createElement('select');sel.className='style-select';
+    [['none','No style'],['badge','🏷 Badge'],['bold','B  Bold'],['muted','···  Muted'],['mono','</>  Monospace'],['number','#  Number']].forEach(([v,t])=>{
+      const o=document.createElement('option');o.value=v;o.textContent=t;o.selected=st.type===v;sel.appendChild(o);
     });
-
-    sel.addEventListener('change', () => {
-      st.type = sel.value;
-      if (st.type === 'badge') initBadgeMap(col.idx);
-      renderColStyleList();
+    sel.addEventListener('change',()=>{
+      st.type=sel.value;
+      if(st.type==='badge')initBadgeMap(col.idx);
+      renderColStyleList();renderPreview();
     });
-
-    head.appendChild(nameEl);
-    head.appendChild(sel);
-
-    /* ── Inline mini-preview for non-badge types ── */
-    if (st.type !== 'none' && st.type !== 'badge') {
-      const prev = document.createElement('div');
-      prev.className = 'style-preview-inline';
-      const sampleText = (getUniqueValues(col.idx)[0] || 'Sample value');
-      const sp = document.createElement('span');
-      sp.textContent = sampleText;
-      if (st.type === 'bold')   { sp.className = 'ex-bold'; }
-      if (st.type === 'muted')  { sp.className = 'ex-muted'; }
-      if (st.type === 'mono')   { sp.className = 'ex-mono'; }
-      if (st.type === 'number') { sp.className = 'ex-number'; }
-      const lbl = document.createElement('small');
-      lbl.style.color = 'var(--muted)';
-      lbl.textContent = 'Preview:';
-      prev.appendChild(lbl);
-      prev.appendChild(sp);
-      head.appendChild(prev);
+    head.appendChild(nameEl);head.appendChild(sel);
+    if(st.type!=='none'&&st.type!=='badge'){
+      const prev=document.createElement('div');prev.className='style-preview-inline';
+      const samp=document.createElement('span');
+      samp.textContent=getUniqueValues(col.idx)[0]||'Sample';
+      samp.className={bold:'ex-bold',muted:'ex-muted',mono:'ex-mono',number:'ex-number'}[st.type]||'';
+      const lbl=document.createElement('small');lbl.style.color='var(--muted)';lbl.textContent='Preview:';
+      prev.appendChild(lbl);prev.appendChild(samp);head.appendChild(prev);
     }
-
     row.appendChild(head);
-
-    /* ── Badge configurator ── */
-    if (st.type === 'badge') {
+    if(st.type==='badge'){
       initBadgeMap(col.idx);
-      const cfg = document.createElement('div');
-      cfg.className = 'badge-config';
-
-      const uniqueVals = getUniqueValues(col.idx);
-      if (!uniqueVals.length) {
-        cfg.innerHTML = '<p style="color:var(--muted);font-size:.8rem;margin:0">No values found in this column.</p>';
-      } else {
-        uniqueVals.forEach(val => {
-          const pickedIdx = st.badgeMap[val] !== undefined ? st.badgeMap[val] : 0;
-          const preset    = PRESETS[pickedIdx];
-
-          const vrow = document.createElement('div');
-          vrow.className = 'badge-val-row';
-
-          const vname = document.createElement('span');
-          vname.className = 'badge-val-name';
-          vname.textContent = val;
-
-          const vprev = document.createElement('span');
-          vprev.className = 'badge-val-preview';
-          vprev.textContent = val;
-          vprev.style.background = preset.bg;
-          vprev.style.color = preset.color;
-
-          const swatches = document.createElement('div');
-          swatches.className = 'badge-swatches';
-          PRESETS.forEach((p, pi) => {
-            const sw = document.createElement('button');
-            sw.className = 'swatch' + (pi === pickedIdx ? ' picked' : '');
-            sw.style.background = p.bg;
-            sw.style.borderColor = pi === pickedIdx ? p.color : 'transparent';
-            sw.title = p.name;
-            sw.addEventListener('click', () => {
-              st.badgeMap[val] = pi;
-              renderColStyleList();
-            });
-            swatches.appendChild(sw);
-          });
-
-          vrow.appendChild(vname);
-          vrow.appendChild(vprev);
-          vrow.appendChild(swatches);
-          cfg.appendChild(vrow);
+      const cfg=document.createElement('div');cfg.className='badge-config';
+      const uv=getUniqueValues(col.idx);
+      if(!uv.length){cfg.innerHTML='<p style="color:var(--muted);font-size:.8rem;margin:0">No values found.</p>';}
+      else uv.forEach(val=>{
+        const pi=st.badgeMap[val]!==undefined?st.badgeMap[val]:0;
+        const p=PRESETS[pi];
+        const vrow=document.createElement('div');vrow.className='badge-val-row';
+        const vname=document.createElement('span');vname.className='badge-val-name';vname.textContent=val;
+        const vprev=document.createElement('span');vprev.className='badge-val-preview';
+        vprev.textContent=val;vprev.style.background=p.bg;vprev.style.color=p.color;
+        const sw=document.createElement('div');sw.className='badge-swatches';
+        PRESETS.forEach((pr,pi2)=>{
+          const b=document.createElement('button');
+          b.className='swatch'+(pi2===pi?' picked':'');
+          b.style.background=pr.bg;b.style.borderColor=pi2===pi?pr.color:'transparent';
+          b.title=pr.name;
+          b.addEventListener('click',()=>{st.badgeMap[val]=pi2;renderColStyleList();renderPreview();});
+          sw.appendChild(b);
         });
-      }
+        vrow.appendChild(vname);vrow.appendChild(vprev);vrow.appendChild(sw);
+        cfg.appendChild(vrow);
+      });
       row.appendChild(cfg);
     }
-
     list.appendChild(row);
   });
 }
 
-function initBadgeMap(colIdx) {
-  const st = colStyles[colIdx];
-  if (!st.badgeMap) st.badgeMap = {};
-  getUniqueValues(colIdx).forEach((v, i) => {
-    if (st.badgeMap[v] === undefined) st.badgeMap[v] = i % PRESETS.length;
-  });
+function initBadgeMap(colIdx){
+  const st=colStyles[colIdx];if(!st.badgeMap)st.badgeMap={};
+  getUniqueValues(colIdx).forEach((v,i)=>{if(st.badgeMap[v]===undefined)st.badgeMap[v]=i%PRESETS.length;});
 }
 
-/* ─────────────────────────────────────────────
-   PREVIEW MODE TOGGLE
-───────────────────────────────────────────── */
-function setPreviewMode(mode) {
-  previewMode = mode; previewPage = 1;
-  document.getElementById('tab-desktop').classList.toggle('active', mode === 'desktop');
-  document.getElementById('tab-mobile').classList.toggle('active', mode === 'mobile');
-  document.getElementById('desktop-view').hidden = mode !== 'desktop';
-  document.getElementById('mobile-view').hidden  = mode !== 'mobile';
+/* ═══════════════════════════════════════════════
+   PREVIEW MODE
+═══════════════════════════════════════════════ */
+function setPreviewMode(mode){
+  previewMode=mode;previewPage=1;pvSearch='';pvFilter='';
+  document.getElementById('tab-desktop').classList.toggle('active',mode==='desktop');
+  document.getElementById('tab-mobile').classList.toggle('active',mode==='mobile');
+  document.getElementById('desktop-view').hidden=mode!=='desktop';
+  document.getElementById('mobile-view').hidden=mode!=='mobile';
   renderPreview();
 }
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
+   PREVIEW CONTROL BARS
+═══════════════════════════════════════════════ */
+function renderPreviewCtrlBars(){
+  const isMob=previewMode==='mobile';
+  const filterColIdx=document.getElementById('ctrl-f-col').value; // allCols idx as string
+  const filterCol=filterColIdx!==''?allCols.find(c=>String(c.idx)===filterColIdx):null;
+
+  const showSearch=isMob
+    ? document.getElementById('ctrl-s-mob').checked
+    : document.getElementById('ctrl-s-desk').checked;
+  const showFilter=filterCol&&(isMob
+    ? document.getElementById('ctrl-f-mob').checked
+    : document.getElementById('ctrl-f-desk').checked);
+  // On mobile, also hide filter if that column is hidden on mobile
+  const filterVisOnMode=!filterCol||(isMob?filterCol.mobileVisible:true);
+
+  if(isMob){
+    const bar=document.getElementById('mob-ctrl-bar');
+    bar.innerHTML='';bar.hidden=!(showSearch||(showFilter&&filterVisOnMode));
+    if(showSearch){
+      const inp=document.createElement('input');inp.type='text';inp.placeholder='Search…';
+      inp.value=pvSearch;
+      inp.addEventListener('input',e=>{pvSearch=e.target.value;previewPage=1;renderPreviewTable();renderPreviewPagination(...getFilteredRows());});
+      bar.appendChild(inp);
+    }
+    if(showFilter&&filterVisOnMode&&filterCol){
+      const sel=buildFilterSelect(filterCol);
+      bar.appendChild(sel);
+    }
+  } else {
+    const bar=document.getElementById('desk-ctrl-bar');
+    bar.innerHTML='';
+    if(showSearch){
+      const inp=document.createElement('input');inp.type='text';inp.placeholder='Search…';
+      inp.value=pvSearch;
+      inp.addEventListener('input',e=>{pvSearch=e.target.value;previewPage=1;renderPreviewTable();renderPreviewPagination(...getFilteredRows());});
+      bar.appendChild(inp);
+    }
+    if(showFilter&&filterCol){
+      const sel=buildFilterSelect(filterCol);
+      bar.appendChild(sel);
+    }
+    if(!showSearch&&!showFilter){
+      const note=document.createElement('span');note.className='preview-ctrl-note';
+      note.textContent='No controls enabled for desktop — adjust in step 2.';
+      bar.appendChild(note);
+    }
+  }
+}
+
+function buildFilterSelect(filterCol){
+  const sel=document.createElement('select');
+  const allOpt=document.createElement('option');
+  allOpt.value='';allOpt.textContent='All '+filterCol.label;
+  sel.appendChild(allOpt);
+  getUniqueValues(filterCol.idx).forEach(v=>{
+    const o=document.createElement('option');o.value=v;o.textContent=v;
+    if(v===pvFilter)o.selected=true;
+    sel.appendChild(o);
+  });
+  sel.value=pvFilter;
+  sel.addEventListener('change',e=>{pvFilter=e.target.value;previewPage=1;renderPreviewTable();renderPreviewPagination(...getFilteredRows());});
+  return sel;
+}
+
+/* ═══════════════════════════════════════════════
    PREVIEW TABLE
-───────────────────────────────────────────── */
-function renderPreview() {
-  const isMob = previewMode === 'mobile';
-  const visCols = allCols.filter(c => isMob ? (c.visible && c.mobileVisible) : c.visible);
-  const totalPages = Math.ceil(allRows.length / PREVIEW_PZ) || 1;
-  if (previewPage > totalPages) previewPage = 1;
-  const start = (previewPage - 1) * PREVIEW_PZ;
-  const pageRows = allRows.slice(start, start + PREVIEW_PZ);
-  const theadId = isMob ? 'mob-thead' : 'row-thead';
-  const tbodyId = isMob ? 'mob-tbody' : 'row-tbody';
+═══════════════════════════════════════════════ */
+function getFilteredRows(){
+  const isMob=previewMode==='mobile';
+  const filterColIdx=document.getElementById('ctrl-f-col').value;
+  const filterCol=filterColIdx!==''?allCols.find(c=>String(c.idx)===filterColIdx):null;
+  let rows=allRows;
+  if(pvSearch){
+    const q=pvSearch.toLowerCase();
+    rows=rows.filter(r=>r.join(' ').toLowerCase().includes(q));
+  }
+  if(pvFilter&&filterCol){
+    rows=rows.filter(r=>(r[filterCol.idx]||'').trim()===pvFilter);
+  }
+  const total=rows.length;
+  const totalPages=Math.ceil(total/PREVIEW_PZ)||1;
+  return[rows,total,totalPages];
+}
+
+function renderPreviewTable(){
+  const isMob=previewMode==='mobile';
+  const visCols=allCols.filter(c=>isMob?(c.visible&&c.mobileVisible):c.visible);
+  const[rows,total,totalPages]=getFilteredRows();
+  if(previewPage>totalPages)previewPage=1;
+  const start=(previewPage-1)*PREVIEW_PZ;
+  const pageRows=rows.slice(start,start+PREVIEW_PZ);
+  const theadId=isMob?'mob-thead':'row-thead';
+  const tbodyId=isMob?'mob-tbody':'row-tbody';
 
   // Header
-  const thead = document.getElementById(theadId);
-  thead.innerHTML = '';
-  const htr = document.createElement('tr');
-  if (!isMob) { const thN = document.createElement('th'); thN.className = 'row-num'; thN.textContent = '#'; htr.appendChild(thN); }
-  visCols.forEach(col => { const th = document.createElement('th'); th.textContent = col.label; htr.appendChild(th); });
+  const thead=document.getElementById(theadId);thead.innerHTML='';
+  const htr=document.createElement('tr');
+  if(!isMob){const thN=document.createElement('th');thN.className='row-num';thN.textContent='#';htr.appendChild(thN);}
+  visCols.forEach(col=>{const th=document.createElement('th');th.textContent=col.label;htr.appendChild(th);});
   thead.appendChild(htr);
 
   // Body
-  const tbody = document.getElementById(tbodyId);
-  tbody.innerHTML = '';
-  pageRows.forEach((row, pi) => {
-    const actualIdx = start + pi;
-    const tr = document.createElement('tr');
-    if (excluded.has(actualIdx)) tr.classList.add('excluded');
-    if (!isMob) { const tdN = document.createElement('td'); tdN.className = 'row-num'; tdN.textContent = actualIdx + 1; tr.appendChild(tdN); }
-    visCols.forEach(col => {
-      const td = document.createElement('td');
-      const val = row[col.idx] || '';
-      const st = colStyles[col.idx];
-      if (st && st.type === 'badge' && st.badgeMap && st.badgeMap[val] !== undefined) {
-        const p = PRESETS[st.badgeMap[val]];
-        const span = document.createElement('span');
-        span.className = 'badge-val-preview';
-        span.textContent = val; span.style.background = p.bg; span.style.color = p.color;
+  const tbody=document.getElementById(tbodyId);tbody.innerHTML='';
+  pageRows.forEach((row,pi)=>{
+    const actualIdx=allRows.indexOf(row);
+    const tr=document.createElement('tr');
+    if(excluded.has(actualIdx))tr.classList.add('excluded');
+    if(!isMob){const tdN=document.createElement('td');tdN.className='row-num';tdN.textContent=allRows.indexOf(row)+1;tr.appendChild(tdN);}
+    visCols.forEach(col=>{
+      const td=document.createElement('td');
+      const val=row[col.idx]||'';
+      const st=colStyles[col.idx];
+      if(st&&st.type==='badge'&&st.badgeMap&&st.badgeMap[val]!==undefined){
+        const p=PRESETS[st.badgeMap[val]];
+        const span=document.createElement('span');span.className='badge-val-preview';
+        span.textContent=val;span.style.background=p.bg;span.style.color=p.color;
         td.appendChild(span);
-      } else if (st && st.type === 'bold')   { td.innerHTML = '<strong>' + esc(val) + '</strong>'; }
-        else if (st && st.type === 'muted')  { td.textContent = val; td.className = 'ex-muted'; }
-        else if (st && st.type === 'mono')   { td.textContent = val; td.style.fontFamily = 'ui-monospace,monospace'; }
-        else if (st && st.type === 'number') { td.textContent = val; td.style.fontFamily = 'ui-monospace,monospace'; td.style.textAlign = 'right'; }
-        else { td.textContent = val; }
+      } else if(st&&st.type==='bold'){td.innerHTML='<strong>'+esc(val)+'</strong>';}
+        else if(st&&st.type==='muted'){td.textContent=val;td.style.opacity='.6';}
+        else if(st&&st.type==='mono'){td.textContent=val;td.style.fontFamily='ui-monospace,monospace';}
+        else if(st&&st.type==='number'){td.textContent=val;td.style.fontFamily='ui-monospace,monospace';td.style.textAlign='right';}
+        else{td.textContent=val;}
       tr.appendChild(td);
     });
-    tr.addEventListener('click', () => {
-      if (excluded.has(actualIdx)) excluded.delete(actualIdx); else excluded.add(actualIdx);
-      tr.classList.toggle('excluded');
-      updateExclPill();
+    tr.addEventListener('click',()=>{
+      if(excluded.has(actualIdx))excluded.delete(actualIdx);else excluded.add(actualIdx);
+      tr.classList.toggle('excluded');updateExclPill();
     });
     tbody.appendChild(tr);
   });
-
   updateExclPill();
-  renderPreviewPagination(allRows.length, totalPages);
 }
 
-function renderPreviewPagination(total, totalPages) {
-  const pag = document.getElementById('preview-pag');
-  pag.innerHTML = '';
-  if (totalPages <= 1) return;
-  function btn(label, page, disabled, active) {
-    const b = document.createElement('button');
-    b.className = 'ppg-btn' + (active ? ' active' : '');
-    b.textContent = label; b.disabled = disabled;
-    if (!disabled && !active) b.addEventListener('click', () => { previewPage = page; renderPreview(); });
+function renderPreview(){
+  renderPreviewCtrlBars();
+  renderPreviewTable();
+  const[,total,totalPages]=getFilteredRows();
+  renderPreviewPagination(total,totalPages);
+}
+
+function renderPreviewPagination(total,totalPages){
+  const pag=document.getElementById('preview-pag');pag.innerHTML='';
+  if(totalPages<=1)return;
+  function btn(label,page,disabled,active){
+    const b=document.createElement('button');
+    b.className='ppg-btn'+(active?' active':'');
+    b.textContent=label;b.disabled=disabled;
+    if(!disabled&&!active)b.addEventListener('click',()=>{previewPage=page;renderPreviewTable();renderPreviewPagination(...getFilteredRows());});
     return b;
   }
-  pag.appendChild(btn('←', previewPage - 1, previewPage === 1, false));
-  const pages = [];
-  for (let p = 1; p <= totalPages; p++) {
-    if (p === 1 || p === totalPages || (p >= previewPage - 1 && p <= previewPage + 1)) pages.push(p);
-    else if (pages[pages.length - 1] !== '…') pages.push('…');
+  pag.appendChild(btn('←',previewPage-1,previewPage===1,false));
+  const pages=[];
+  for(let p=1;p<=totalPages;p++){
+    if(p===1||p===totalPages||(p>=previewPage-1&&p<=previewPage+1))pages.push(p);
+    else if(pages[pages.length-1]!=='…')pages.push('…');
   }
-  pages.forEach(p => {
-    if (p === '…') { const s = document.createElement('span'); s.className = 'ppg-ellipsis'; s.textContent = '…'; pag.appendChild(s); }
-    else pag.appendChild(btn(p, p, false, p === previewPage));
+  pages.forEach(p=>{
+    if(p==='…'){const s=document.createElement('span');s.className='ppg-ellipsis';s.textContent='…';pag.appendChild(s);}
+    else pag.appendChild(btn(p,p,false,p===previewPage));
   });
-  pag.appendChild(btn('→', previewPage + 1, previewPage === totalPages, false));
+  pag.appendChild(btn('→',previewPage+1,previewPage===totalPages,false));
 }
 
-function updateExclPill() {
-  const pill = document.getElementById('excl-pill');
-  pill.hidden = excluded.size === 0;
-  if (excluded.size) pill.textContent = excluded.size + ' excluded';
-  document.getElementById('row-summary').textContent =
-    (allRows.length - excluded.size) + ' of ' + allRows.length + ' rows will be included in the output.';
+function updateExclPill(){
+  const pill=document.getElementById('excl-pill');
+  pill.hidden=excluded.size===0;
+  if(excluded.size)pill.textContent=excluded.size+' excluded';
+  document.getElementById('row-summary').textContent=
+    (allRows.length-excluded.size)+' of '+allRows.length+' rows will be included in the output.';
 }
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    HTML ESCAPE
-───────────────────────────────────────────── */
-function esc(str) {
-  return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+═══════════════════════════════════════════════ */
+function esc(str){
+  return String(str||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    OUTPUT GENERATOR
-───────────────────────────────────────────── */
-function generateOutput() {
-  const visCols = allCols.filter(c => c.visible);
-  if (!visCols.length) { alert('Select at least one column.'); return; }
+═══════════════════════════════════════════════ */
+function generateOutput(){
+  const visCols=allCols.filter(c=>c.visible);
+  if(!visCols.length){alert('Select at least one column.');return;}
 
-  const mobHidden = visCols.map((c, i) => c.mobileVisible ? null : i).filter(i => i !== null);
-  const rows = allRows.filter((_, i) => !excluded.has(i)).map(r => visCols.map(c => (r[c.idx] || '').trim()));
-  if (!rows.length) { alert('No rows remain after exclusions.'); return; }
+  const mobHidden=visCols.map((c,i)=>c.mobileVisible?null:i).filter(i=>i!==null);
+  const rows=allRows.filter((_,i)=>!excluded.has(i)).map(r=>visCols.map(c=>(r[c.idx]||'').trim()));
+  if(!rows.length){alert('No rows remain after exclusions.');return;}
 
-  const title    = document.getElementById('tbl-title').value.trim();
-  const subtitle = document.getElementById('tbl-subtitle').value.trim();
-  const source   = document.getElementById('tbl-source').value.trim();
-  const pageSize = parseInt(document.getElementById('tbl-pagesize').value) || 20;
-  const headers  = visCols.map(c => c.label);
-  const uid      = 'nt' + Math.random().toString(36).slice(2, 8);
+  const title   =document.getElementById('tbl-title').value.trim();
+  const subtitle=document.getElementById('tbl-subtitle').value.trim();
+  const source  =document.getElementById('tbl-source').value.trim();
+  const pageSize=parseInt(document.getElementById('tbl-pagesize').value)||20;
+  const headers =visCols.map(c=>c.label);
+  const uid     ='nt'+Math.random().toString(36).slice(2,8);
 
-  // Build styles map keyed by visible-column index (0-based)
-  const stylesMap = {};
-  visCols.forEach((col, vi) => {
-    const st = colStyles[col.idx];
-    if (!st || st.type === 'none') return;
-    if (st.type === 'badge') {
-      stylesMap[vi] = { type: 'badge', map: Object.assign({}, st.badgeMap) };
-    } else {
-      stylesMap[vi] = { type: st.type };
-    }
+  // Controls config
+  const sDesk=document.getElementById('ctrl-s-desk').checked;
+  const sMob =document.getElementById('ctrl-s-mob').checked;
+  const filterColIdx=document.getElementById('ctrl-f-col').value;
+  const filterCol=filterColIdx!==''?allCols.find(c=>String(c.idx)===filterColIdx):null;
+  const fDesk=filterCol&&document.getElementById('ctrl-f-desk').checked;
+  const fMob =filterCol&&document.getElementById('ctrl-f-mob').checked;
+
+  // Filter column position in output rows (index within visCols)
+  const fVisIdx=filterCol?visCols.findIndex(c=>c.idx===filterCol.idx):-1;
+  // Filter column hidden on mobile?
+  const fHiddenOnMob=filterCol&&!filterCol.mobileVisible;
+
+  // Filter unique values from included rows
+  const filterVals=fVisIdx>=0
+    ?[...new Set(rows.map(r=>r[fVisIdx]).filter(Boolean))].sort()
+    :[];
+
+  // Styles map
+  const stylesMap={};
+  visCols.forEach((col,vi)=>{
+    const st=colStyles[col.idx];
+    if(!st||st.type==='none')return;
+    stylesMap[vi]=st.type==='badge'?{type:'badge',map:{...st.badgeMap}}:{type:st.type};
   });
 
-  document.getElementById('output-code').value =
-    buildCSS(uid, mobHidden, stylesMap)
-    + '\n\n' + buildMarkup(uid, title, subtitle, source, headers)
-    + '\n\n' + buildScript(uid, rows, pageSize, stylesMap);
+  const ctrlCfg={sDesk,sMob,fDesk,fMob,fVisIdx,fHiddenOnMob,filterVals,filterLabel:filterCol?filterCol.label:''};
+
+  document.getElementById('output-code').value=
+    buildCSS(uid,mobHidden,stylesMap,ctrlCfg)
+    +'\n\n'+buildMarkup(uid,title,subtitle,source,headers,ctrlCfg)
+    +'\n\n'+buildScript(uid,rows,pageSize,stylesMap,ctrlCfg);
 }
 
 /* ── CSS ── */
-function buildCSS(u, mobHidden, stylesMap) {
-  // Badge preset colours
-  const presetCSS = PRESETS.map((p, i) =>
-    `.${u}-bg${i}{background:${p.bg};color:${p.color};}`
-  ).join('');
+function buildCSS(u,mobHidden,stylesMap,c){
+  const presetCSS=PRESETS.map((p,i)=>`.${u}-bg${i}{background:${p.bg};color:${p.color};}`).join('');
+  const mobileRule=mobHidden.length?`@media(max-width:768px){${mobHidden.map(i=>`.${u}-c${i}`).join(',')}{display:none;}}`:'';
 
-  // Mobile hide rules
-  const mobileRule = mobHidden.length
-    ? `@media(max-width:768px){${mobHidden.map(i => `.${u}-c${i}`).join(',')}{display:none;}}`
-    : '';
+  // Search responsive rules
+  const searchRules=[];
+  if(c.sDesk&&!c.sMob) searchRules.push(`@media(max-width:768px){.${u}-srch{display:none;}}`);
+  if(!c.sDesk&&c.sMob) searchRules.push(`@media(min-width:769px){.${u}-srch{display:none;}}`);
+  if(!c.sDesk&&!c.sMob) searchRules.push(`.${u}-srch{display:none;}`);
 
-  return `<style>
+  // Filter responsive rules
+  const filterRules=[];
+  if(c.fDesk&&!c.fMob)  filterRules.push(`@media(max-width:768px){.${u}-flt{display:none;}}`);
+  if(!c.fDesk&&c.fMob)  filterRules.push(`@media(min-width:769px){.${u}-flt{display:none;}}`);
+  if(!c.fDesk&&!c.fMob) filterRules.push(`.${u}-flt{display:none;}`);
+  // Also hide filter on mobile if the filter column itself is mobile-hidden
+  if(c.fHiddenOnMob&&(c.fDesk||c.fMob)) filterRules.push(`@media(max-width:768px){.${u}-flt{display:none;}}`);
+
+  return`<style>
 .${u}{font-family:var(--font-body,Georgia,serif);max-width:100%;color:var(--color-darkgrey,#15171a);grid-column:full-start/full-end;padding-left:50px;padding-right:50px;}
 @media(max-width:768px){.${u}{padding-left:0;padding-right:0;}}
 .${u}-hd{border-top:4px solid var(--color-primary,#00243e);padding:24px 0 16px;margin-bottom:8px;}
 .${u}-hd h2{font-family:var(--font-heading,sans-serif);font-weight:700;margin:0 0 6px;line-height:1.2;color:var(--color-primary,#00243e);}
 .${u}-hd p{font-family:var(--font-caption,serif);color:var(--ntr-home-muted,#617784);margin:0;}
-.${u}-ctrl{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0;}
-.${u}-ctrl input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--color-lightgrey,#c5d2d9);font-family:var(--font-heading,sans-serif);outline:none;background:#fff;color:var(--color-darkgrey,#15171a);}
-.${u}-ctrl input:focus{border-color:var(--color-primary,#00243e);}
-.${u}-count{font-family:var(--font-mono,monospace);color:var(--ntr-home-muted,#617784);white-space:nowrap;}
+.${u}-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0;}
+.${u}-srch input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--color-lightgrey,#c5d2d9);font-family:var(--font-heading,sans-serif);outline:none;background:#fff;color:var(--color-darkgrey,#15171a);}
+.${u}-srch input:focus{border-color:var(--color-primary,#00243e);}
+.${u}-flt select{padding:8px 12px;border:1px solid var(--color-lightgrey,#c5d2d9);font-family:var(--font-heading,sans-serif);background:#fff;color:var(--color-darkgrey,#15171a);cursor:pointer;outline:none;}
+.${u}-flt select:focus{border-color:var(--color-primary,#00243e);}
+.${u}-count{font-family:var(--font-mono,monospace);color:var(--ntr-home-muted,#617784);white-space:nowrap;margin-left:auto;}
 .${u}-tw{overflow-x:auto;border:1px solid rgba(12,24,32,.12);}
 .${u}-tw table{width:100%;border-collapse:collapse;}
 .${u}-tw thead th{background:var(--color-primary,#00243e);color:#fff;text-align:left;padding:10px 12px;font-family:var(--font-heading,sans-serif);font-weight:600;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;}
@@ -693,17 +776,29 @@ ${presetCSS}
 .${u}-pb:disabled{opacity:.35;cursor:default;}
 .${u}-el{font-family:var(--font-mono,monospace);color:var(--color-midgrey,#738a94);padding:0 4px;}
 .${u}-ft{font-family:var(--font-caption,serif);color:var(--color-midgrey,#738a94);margin-top:10px;padding:8px 0 4px;border-top:1px solid rgba(12,24,32,.08);}
+${searchRules.join('\n')}
+${filterRules.join('\n')}
 ${mobileRule}
 </style>`;
 }
 
 /* ── Markup ── */
-function buildMarkup(u, title, subtitle, source, headers) {
-  const headerRow = headers.map((h, i) => `<th class="${u}-th ${u}-c${i}">${esc(h)}</th>`).join('');
-  return `<div class="${u}">
-  ${title ? `<div class="${u}-hd"><h2>${esc(title)}</h2>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div>` : ''}
+function buildMarkup(u,title,subtitle,source,headers,c){
+  const headerRow=headers.map((h,i)=>`<th class="${u}-th ${u}-c${i}">${esc(h)}</th>`).join('');
+  const hasSearch=c.sDesk||c.sMob;
+  const hasFilter=(c.fDesk||c.fMob)&&c.filterVals.length;
+
+  const searchEl=hasSearch
+    ?`<div class="${u}-srch"><input id="${u}-search" type="text" placeholder="Search…" aria-label="Search"></div>`:'';
+
+  const filterOpts=c.filterVals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  const filterEl=hasFilter
+    ?`<div class="${u}-flt"><select id="${u}-filter"><option value="">All ${esc(c.filterLabel)}</option>${filterOpts}</select></div>`:'';
+
+  return`<div class="${u}">
+  ${title?`<div class="${u}-hd"><h2>${esc(title)}</h2>${subtitle?`<p>${esc(subtitle)}</p>`:''}</div>`:''}
   <div class="${u}-ctrl">
-    <input id="${u}-search" type="text" placeholder="Search…" aria-label="Search table">
+    ${searchEl}${filterEl}
     <span class="${u}-count" id="${u}-count"></span>
   </div>
   <div class="${u}-tw">
@@ -711,30 +806,33 @@ function buildMarkup(u, title, subtitle, source, headers) {
     <div class="${u}-empty" id="${u}-empty">No matching records found.</div>
   </div>
   <div class="${u}-pag" id="${u}-pag"></div>
-  ${source ? `<div class="${u}-ft">${esc(source)}</div>` : ''}
+  ${source?`<div class="${u}-ft">${esc(source)}</div>`:''}
 </div>`;
 }
 
 /* ── Script ── */
-function buildScript(u, rows, pageSize, stylesMap) {
-  // Bake in only the preset colours needed
-  const usedPresets = new Set();
-  Object.values(stylesMap).forEach(st => {
-    if (st.type === 'badge') Object.values(st.map).forEach(i => usedPresets.add(i));
-  });
-  const presetsJSON = JSON.stringify(
-    PRESETS.map((p, i) => usedPresets.has(i) ? { bg: p.bg, c: p.color } : null)
-  );
+function buildScript(u,rows,pageSize,stylesMap,c){
+  const usedPresets=new Set();
+  Object.values(stylesMap).forEach(st=>{if(st.type==='badge')Object.values(st.map).forEach(i=>usedPresets.add(i));});
+  const presetsJSON=JSON.stringify(PRESETS.map((p,i)=>usedPresets.has(i)?{bg:p.bg,cl:p.color}:null));
+  const hasSearch=c.sDesk||c.sMob;
+  const hasFilter=(c.fDesk||c.fMob)&&c.filterVals.length&&c.fVisIdx>=0;
 
-  return `<script>
+  return`<script>
 (function(){
 var U='${u}',ROWS=${JSON.stringify(rows)},PZ=${pageSize},PAGE=1,SC=-1,SD=1;
 var STYLES=${JSON.stringify(stylesMap)};
 var PR=${presetsJSON};
+var FCOL=${c.fVisIdx};
+function $id(id){return document.getElementById(id);}
 function escH(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function filt(){
-  var q=document.getElementById(U+'-search').value.toLowerCase().trim();
+  var SEL=${hasSearch}?$id(U+'-search'):null;
+  var FEL=${hasFilter}?$id(U+'-filter'):null;
+  var q=SEL?SEL.value.toLowerCase().trim():'';
+  var fv=FEL?FEL.value:'';
   var r=ROWS.slice();
+  if(fv&&FCOL>=0)r=r.filter(function(x){return x[FCOL]===fv;});
   if(q)r=r.filter(function(x){return x.join(' ').toLowerCase().indexOf(q)>=0;});
   if(SC>=0)r.sort(function(a,b){
     var av=a[SC],bv=b[SC],an=parseFloat(av),bn=parseFloat(bv);
@@ -748,28 +846,23 @@ function applyCell(td,val,ci){
   if(!st){td.textContent=val;return;}
   if(st.type==='badge'&&st.map&&st.map[val]!==undefined){
     var pi=st.map[val],p=PR[pi];
-    if(p){td.innerHTML='<span class="'+U+'-badge '+U+'-bg'+pi+'">'+escH(val)+'</span>';}
-    else{td.textContent=val;}
-  }else if(st.type==='bold'){
-    td.innerHTML='<strong>'+escH(val)+'</strong>';
-  }else if(st.type==='muted'){
-    td.textContent=val;td.style.opacity='.6';
-  }else if(st.type==='mono'){
-    td.textContent=val;td.style.fontFamily='ui-monospace,monospace';
-  }else if(st.type==='number'){
-    td.textContent=val;td.style.fontFamily='ui-monospace,monospace';td.style.textAlign='right';
-  }else{td.textContent=val;}
+    if(p)td.innerHTML='<span class="'+U+'-badge '+U+'-bg'+pi+'">'+escH(val)+'</span>';
+    else td.textContent=val;
+  }else if(st.type==='bold'){td.innerHTML='<strong>'+escH(val)+'</strong>';}
+  else if(st.type==='muted'){td.textContent=val;td.style.opacity='.6';}
+  else if(st.type==='mono'){td.textContent=val;td.style.fontFamily='ui-monospace,monospace';}
+  else if(st.type==='number'){td.textContent=val;td.style.fontFamily='ui-monospace,monospace';td.style.textAlign='right';}
+  else td.textContent=val;
 }
 function render(){
   var f=filt(),tot=f.length,tp=Math.ceil(tot/PZ)||1;
   if(PAGE>tp)PAGE=1;
   var s=(PAGE-1)*PZ,e=Math.min(s+PZ,tot),sl=f.slice(s,e);
-  var tb=document.getElementById(U+'-tbody');
-  tb.innerHTML='';
-  var em=document.getElementById(U+'-empty');
-  if(!tot){em.style.display='';document.getElementById(U+'-count').textContent='0 records';pag(0,1);return;}
+  var tb=$id(U+'-tbody');tb.innerHTML='';
+  var em=$id(U+'-empty');
+  if(!tot){em.style.display='';$id(U+'-count').textContent='0 records';pag(0,1);return;}
   em.style.display='none';
-  document.getElementById(U+'-count').textContent=(s+1)+'–'+e+' of '+tot;
+  $id(U+'-count').textContent=(s+1)+'–'+e+' of '+tot;
   sl.forEach(function(r){
     var tr=document.createElement('tr');
     r.forEach(function(c,ci){
@@ -783,15 +876,11 @@ function render(){
   pag(tot,tp);
 }
 function pag(tot,tp){
-  var p=document.getElementById(U+'-pag');
-  p.innerHTML='';
-  if(tp<=1)return;
+  var p=$id(U+'-pag');p.innerHTML='';if(tp<=1)return;
   function btn(lbl,pg,dis,on){
     var b=document.createElement('button');
-    b.className=U+'-pb'+(on?' on':'');
-    b.textContent=lbl;b.disabled=dis;
-    if(!dis&&!on)b.onclick=function(){PAGE=pg;render();};
-    return b;
+    b.className=U+'-pb'+(on?' on':'');b.textContent=lbl;b.disabled=dis;
+    if(!dis&&!on)b.onclick=function(){PAGE=pg;render();};return b;
   }
   p.appendChild(btn('←',PAGE-1,PAGE===1,false));
   var pages=[];
@@ -809,25 +898,25 @@ document.querySelectorAll('.'+U+'-th').forEach(function(th,i){
   th.addEventListener('click',function(){
     document.querySelectorAll('.'+U+'-th').forEach(function(t){t.classList.remove('asc','desc');});
     if(SC===i){SD*=-1;}else{SC=i;SD=1;}
-    th.classList.add(SD===1?'asc':'desc');
-    PAGE=1;render();
+    th.classList.add(SD===1?'asc':'desc');PAGE=1;render();
   });
 });
-document.getElementById(U+'-search').addEventListener('input',function(){PAGE=1;render();});
+${hasSearch?`$id(U+'-search').addEventListener('input',function(){PAGE=1;render();});`:''}
+${hasFilter?`$id(U+'-filter').addEventListener('change',function(){PAGE=1;render();});`:''}
 render();
 })();
 <\/script>`;
 }
 
-/* ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
    COPY
-───────────────────────────────────────────── */
-function copyOutput() {
-  const txt = document.getElementById('output-code').value;
-  if (!txt) { generateOutput(); return; }
+═══════════════════════════════════════════════ */
+function copyOutput(){
+  const txt=document.getElementById('output-code').value;
+  if(!txt){generateOutput();return;}
   navigator.clipboard.writeText(txt)
-    .then(() => alert('Copied to clipboard!'))
-    .catch(() => { document.getElementById('output-code').select(); document.execCommand('copy'); });
+    .then(()=>alert('Copied to clipboard!'))
+    .catch(()=>{document.getElementById('output-code').select();document.execCommand('copy');});
 }
 </script>
 </body>
